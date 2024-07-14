@@ -1,7 +1,7 @@
+### [Скачать exe файл из исходника](https://github.com/N3M1X10/DWD/raw/main/Disable%20Windows%20Defender/bin/Release/Disable%20Windows%20Defender.exe)
+
 Программа для переключения Мониторинга в реальном времени у защитника Windows.
 Надоедливый и прожорливый мониторинг системы, который замедляет компьютер, можно быстро и с фиксацией, отключать в этой программе.
-
-Скачать: https://github.com/N3M1X10/DWD/raw/main/Disable%20Windows%20Defender/bin/Release/Disable%20Windows%20Defender.exe
 
 - Клацай правой кнопкой мыши по иконке в трее, чтобы открыть контекстное меню.
 
