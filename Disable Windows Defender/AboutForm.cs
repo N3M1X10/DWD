@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,6 +8,11 @@ namespace Disable_Windows_Defender
 {
     public partial class AboutForm : Form
     {
+        //Получить версию сборки чтобы потом впихнуть в заголовок окна
+        readonly static System.Reflection.Assembly assemblyBlock = System.Reflection.Assembly.GetExecutingAssembly();
+        readonly static FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assemblyBlock.Location);
+        readonly static string ProjectVersion = fvi.FileVersion;
+
         public AboutForm()
         {
             TopMost = true;
@@ -27,6 +26,9 @@ namespace Disable_Windows_Defender
             timer.Interval = 1;
             timer.Start();
             Select();
+
+            VersionLabel.Text = "Версия: " + ProjectVersion;
+
         }
 
         private void GithubButton_Click(object sender, EventArgs e)

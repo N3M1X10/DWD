@@ -1,14 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -58,7 +50,7 @@ namespace Disable_Windows_Defender
                     System.Windows.Forms.Timer timer2 = new System.Windows.Forms.Timer();
                         timer2.Tick += new EventHandler((sender, e) =>
                         {
-                            if ((Opacity -= 0.05d) <= 0) timer2.Stop();
+                            if ((Opacity -= 0.05d) <= 0) timer2.Stop(); HideFromAltTab(Handle);
                         });
                         timer2.Interval = 1;
                         timer2.Start();
@@ -95,11 +87,32 @@ namespace Disable_Windows_Defender
                         } //Модуль цмд-шника
                     }
 
-                    //Задержка
-                    await Task.Delay(20000);
+                    //Задержка цикла бдения
+                    await Task.Delay(40000);
                 }
             }
         }
+
+        //
+        // Скрывалка из Альт Таба
+        //
+        [DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr window, int index, int value);
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowLong(IntPtr window, int index);
+
+        private const int GWL_EXSTYLE = -20;
+        private const int WS_EX_TOOLWINDOW = 0x00000080;
+
+        public static void HideFromAltTab(IntPtr Handle)
+        {
+            SetWindowLong(Handle, GWL_EXSTYLE, GetWindowLong(Handle,
+                GWL_EXSTYLE) | WS_EX_TOOLWINDOW);
+        }
+        //
+        // конец скрывалки
+        //
 
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {

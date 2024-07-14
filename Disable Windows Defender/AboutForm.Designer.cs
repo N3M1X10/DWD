@@ -41,11 +41,14 @@
             this.DockPanel = new System.Windows.Forms.Panel();
             this.QuitButton = new System.Windows.Forms.Button();
             this.DockTitle = new System.Windows.Forms.Label();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.VersionLabel = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.DockPanel.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // infoLabelHeader
@@ -111,6 +114,7 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.panel2.Controls.Add(this.panel3);
             this.panel2.Controls.Add(this.ShutDownButton);
             this.panel2.Controls.Add(this.pictureBox2);
             this.panel2.Controls.Add(this.GithubButton);
@@ -153,7 +157,7 @@
             this.GithubButton.ForeColor = System.Drawing.SystemColors.ButtonFace;
             this.GithubButton.Location = new System.Drawing.Point(50, 5);
             this.GithubButton.Name = "GithubButton";
-            this.GithubButton.Size = new System.Drawing.Size(148, 40);
+            this.GithubButton.Size = new System.Drawing.Size(150, 40);
             this.GithubButton.TabIndex = 0;
             this.GithubButton.Text = "Github Автора";
             this.GithubButton.UseVisualStyleBackColor = false;
@@ -203,6 +207,26 @@
             this.DockTitle.MouseDown += new System.Windows.Forms.MouseEventHandler(this.DockTitle_MouseDown);
             this.DockTitle.MouseMove += new System.Windows.Forms.MouseEventHandler(this.DockTitle_MouseMove);
             // 
+            // panel3
+            // 
+            this.panel3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(35)))), ((int)(((byte)(35)))));
+            this.panel3.Controls.Add(this.VersionLabel);
+            this.panel3.Location = new System.Drawing.Point(206, 5);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(150, 40);
+            this.panel3.TabIndex = 3;
+            // 
+            // VersionLabel
+            // 
+            this.VersionLabel.AutoSize = true;
+            this.VersionLabel.Font = new System.Drawing.Font("Comic Sans MS", 10F);
+            this.VersionLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(200)))), ((int)(((byte)(200)))));
+            this.VersionLabel.Location = new System.Drawing.Point(20, 10);
+            this.VersionLabel.Name = "VersionLabel";
+            this.VersionLabel.Size = new System.Drawing.Size(109, 19);
+            this.VersionLabel.TabIndex = 7;
+            this.VersionLabel.Text = "Версия: 0.0.0.0";
+            // 
             // AboutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -225,6 +249,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.DockPanel.ResumeLayout(false);
             this.DockPanel.PerformLayout();
+            this.panel3.ResumeLayout(false);
+            this.panel3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -244,5 +270,7 @@
         private System.Windows.Forms.Panel DockPanel;
         private System.Windows.Forms.Label DockTitle;
         private System.Windows.Forms.Button QuitButton;
+        private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Label VersionLabel;
     }
 }
