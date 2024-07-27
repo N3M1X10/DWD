@@ -1,6 +1,6 @@
 **[Скачать из релизов](https://github.com/N3M1X10/DWD/releases)**
 
-**[Скачать exe из исходника проекта](https://github.com/N3M1X10/DWD/blob/main/Disable%20Windows%20Defender/bin/Release/Disable%20Windows%20Defender.exe)**
+**[Скачать exe из исходника проекта](https://github.com/N3M1X10/DWD/raw/main/Disable%20Windows%20Defender/bin/Release/Disable%20Windows%20Defender.exe)**
 
 ---
 
