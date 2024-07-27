@@ -125,7 +125,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DWD.ico" />
     <Content Include="DWD64.ico" />
   </ItemGroup>
   <ItemGroup>

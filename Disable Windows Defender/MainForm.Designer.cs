@@ -66,7 +66,7 @@
             this.quitToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
             this.contextMenu.ShowImageMargin = false;
-            this.contextMenu.Size = new System.Drawing.Size(285, 146);
+            this.contextMenu.Size = new System.Drawing.Size(285, 124);
             // 
             // disableWinDefenderToolStripMenuItem
             // 
@@ -113,9 +113,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.Font = new System.Drawing.Font("Comic Sans MS", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label1.ForeColor = System.Drawing.SystemColors.Info;
-            this.label1.Location = new System.Drawing.Point(12, 9);
+            this.label1.Location = new System.Drawing.Point(12, 111);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(576, 332);
+            this.label1.Size = new System.Drawing.Size(576, 115);
             this.label1.TabIndex = 1;
             this.label1.Text = "Я в трее! :)";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;

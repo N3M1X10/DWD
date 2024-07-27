@@ -42,7 +42,7 @@ namespace Disable_Windows_Defender
                             if (proc.Id != Process.GetCurrentProcess().Id)
                             {
                                 MessageBox.Show(
-                                "Кажется программа уже запущена ◑﹏◐",
+                                "Кажется программа уже запущена ◑﹏◐ \nПроверьте её в трее :)",
                                 "DWD : Программа уже запущена",
                                 MessageBoxButtons.OK,
                                 MessageBoxIcon.Exclamation

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace Disable_Windows_Defender
 {
@@ -11,9 +12,25 @@ namespace Disable_Windows_Defender
         bool WDdisabled = false;
         private string disabletext = "Отключить Мониторинг";
         private string FuncIsWorkingText = "Бдение за дефендером активно . . .";
+        string SelfFileName = System.IO.Path.GetFileName(Application.ExecutablePath);
 
         public MainForm()
         {
+            AddExclusionToDefender();
+            void AddExclusionToDefender() {
+                Cmd($"powershell.exe Add-MpPreference -ExclusionPath " + "\'" + SelfFileName + "\'");
+                void Cmd(string line)
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "cmd",
+                        Arguments = $"/c {line}",
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    }).WaitForExit();
+                } //Модуль цмд-шника
+                
+            }
+
             InitializeComponent();
             TrayIcon.Visible = true;
 
@@ -61,6 +78,10 @@ namespace Disable_Windows_Defender
         private void MainForm_Load(object sender, EventArgs e)
         {
 
+            //выключили ли мы Дефендер из программы
+            WDdisabled = false;
+
+            //Цикловая функция
             bool cycleIsWorking = true;
             Cycle();
             async void Cycle()
@@ -69,33 +90,33 @@ namespace Disable_Windows_Defender
                 {
                     // Тело цикла
 
-                    if (WDdisabled == true)
+                    if (WDdisabled)
                     {
                         //цикл бдения за мониторингом
-
                         disableWinDefenderToolStripMenuItem.Enabled = false;
                         Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $true\"");
-                        WDdisabled = true;
-                        void Cmd(string line)
-                        {
-                            Process.Start(new ProcessStartInfo
-                            {
-                                FileName = "cmd",
-                                Arguments = $"/c {line}",
-                                WindowStyle = ProcessWindowStyle.Hidden
-                            }).WaitForExit();
-                        } //Модуль цмд-шника
                     }
 
                     //Задержка цикла бдения
                     await Task.Delay(40000);
                 }
+                //Функция с цмд
+                void Cmd(string line)
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "cmd",
+                        Arguments = $"/c {line}",
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    }).WaitForExit();
+                } //Модуль цмд-шника
             }
         }
 
         //
         // Скрывалка из Альт Таба
         //
+
         [DllImport("user32.dll")]
         private static extern int SetWindowLong(IntPtr window, int index, int value);
 
@@ -110,6 +131,7 @@ namespace Disable_Windows_Defender
             SetWindowLong(Handle, GWL_EXSTYLE, GetWindowLong(Handle,
                 GWL_EXSTYLE) | WS_EX_TOOLWINDOW);
         }
+
         //
         // конец скрывалки
         //
@@ -121,10 +143,14 @@ namespace Disable_Windows_Defender
 
         private void disableWinDefenderToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            //Меняем нажимаемость кнопки и текст на ней
             disableWinDefenderToolStripMenuItem.Enabled = false;
             disableWinDefenderToolStripMenuItem.Text = FuncIsWorkingText;
+
+            //Отключаем мониторинг в реальном времени
             Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $true\"");
-            WDdisabled = true;
+            WDdisabled = true; //Говорим циклу что надо держать дефендер выключенным
+
             void Cmd(string line)
             {
                 Process.Start(new ProcessStartInfo
