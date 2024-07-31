@@ -1,7 +1,12 @@
+Скачивание:
+---
+
 **[Скачать из релизов](https://github.com/N3M1X10/DWD/releases)**
 
-**[Скачать exe из исходника проекта](https://github.com/N3M1X10/DWD/raw/main/Disable%20Windows%20Defender/bin/Release/Disable%20Windows%20Defender.exe)**
+**[Сразу скачать exe, из исходника проекта](https://github.com/N3M1X10/DWD/raw/main/Disable%20Windows%20Defender/bin/Release/Disable%20Windows%20Defender.exe)**
 
+---
+README.md
 ---
 
 Программа для переключения Мониторинга в реальном времени у защитника Windows.
