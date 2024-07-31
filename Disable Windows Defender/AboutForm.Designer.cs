@@ -411,8 +411,7 @@
             this.WhatsNewText.Name = "WhatsNewText";
             this.WhatsNewText.Size = new System.Drawing.Size(949, 610);
             this.WhatsNewText.TabIndex = 1;
-            this.WhatsNewText.Text = "• Некоторые криворукие правки в коде\r\n• Автор восстановил доступ к своему аккаунт" +
-    "у. \r\n Обновления этой утилиты вновь выходят на github";
+            this.WhatsNewText.Text = resources.GetString("WhatsNewText.Text");
             // 
             // AboutForm
             // 

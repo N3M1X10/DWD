@@ -9,6 +9,7 @@ namespace Disable_Windows_Defender
 {
     internal static class Program
     {
+        public static AboutForm AFlink;
         public static class RunOnlyOneClass
         {
             [DllImport("user32.dll")]
@@ -32,6 +33,19 @@ namespace Disable_Windows_Defender
             public static bool ChekRunProgramm(string UniqueValue)
             {
                 bool applicationRun = false;
+
+                //PAEshow();
+
+                void PAEshow()
+                {
+                    var PAEmsgbox = MessageBox.Show(
+                        "Кажется программа уже запущена ◑﹏◐ \nПроверьте её в трее :)",
+                        "DWD : Программа уже запущена",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Exclamation
+                        );
+                }
+
                 _syncObject = new Mutex(true, UniqueValue, out applicationRun);
                 if (!applicationRun)
                 {//восстановить/развернуть окно                              
@@ -41,12 +55,8 @@ namespace Disable_Windows_Defender
                         foreach (Process proc in procs)
                             if (proc.Id != Process.GetCurrentProcess().Id)
                             {
-                                MessageBox.Show(
-                                "Кажется программа уже запущена ◑﹏◐ \nПроверьте её в трее :)",
-                                "DWD : Программа уже запущена",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Exclamation
-                                );
+                                //PAEshow();
+
 
                                 SetForegroundWindow(proc.MainWindowHandle);
 

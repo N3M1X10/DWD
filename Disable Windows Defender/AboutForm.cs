@@ -16,7 +16,9 @@ namespace Disable_Windows_Defender
 
         public AboutForm()
         {
+            //вывод поверх экрана
             TopMost = true;
+
             InitializeComponent();
             Opacity = 0;
             Timer timer = new Timer();
@@ -27,6 +29,8 @@ namespace Disable_Windows_Defender
             timer.Interval = 1;
             timer.Start();
             Select();
+            //Отключение режима поверх всех окон
+            TopMost = false;
 
 
             //Замена текстов с подставлением переменных при загрузке окна
@@ -42,26 +46,6 @@ namespace Disable_Windows_Defender
             Process.Start("https://github.com/N3M1X10/DWD");
         }
 
-        private void ShutDownButton_Click(object sender, EventArgs e)
-        {
-            CloseProg();
-        }
-        async void CloseProg()
-        {
-            //Плавное затухание этой формы
-            Opacity = 1;
-            Timer timer = new Timer();
-            timer.Tick += new EventHandler((sender, e) =>
-            {
-                if ((Opacity -= 0.05d) <= 0) timer.Stop();
-            });
-            timer.Interval = 1;
-            timer.Start();
-            await Task.Delay(500);
-
-            //Закрытие всей программы
-            Application.Exit();
-        }
 
 
 
@@ -111,6 +95,29 @@ namespace Disable_Windows_Defender
             await Task.Delay(500);
             Close();
         }
+        //
+        // end Win Dragging
+        //
+
+        //Кнопки на форме
+        private void ShutDownButton_Click(object sender, EventArgs e) { CloseProg(); }
+        async void CloseProg()
+        {
+            //Плавное затухание этой формы
+            Opacity = 1;
+            Timer timer = new Timer();
+            timer.Tick += new EventHandler((sender, e) =>
+            {
+                if ((Opacity -= 0.05d) <= 0) timer.Stop();
+            });
+            timer.Interval = 1;
+            timer.Start();
+            await Task.Delay(500);
+
+            //Закрытие всей программы
+            Application.Exit();
+        }
+
         private void discordButton_Click(object sender, EventArgs e)
         {
             Process.Start("https://discord.gg/2jJ3Qn4");
@@ -123,15 +130,11 @@ namespace Disable_Windows_Defender
         {
             ShutDownButton.ForeColor = ColorTranslator.FromHtml("#ff8888");
         }
-        //
-        // end Win Dragging
-        //
 
 
         //Переключения между вкладками
         bool WhatsNewIsSelected = false;
-        bool AboutIsSelected = true;
-
+        bool AboutIsSelected = true; //стартовая страница
         private void SwitchToWhatsNew_Click(object sender, EventArgs e)
         {
             //ПЕРЕКЛЮЧИТЬСЯ НА "ЧТО НОВОГО"
@@ -148,7 +151,7 @@ namespace Disable_Windows_Defender
         }
 
         //Свитчер окошек
-        //Сделан патологически криво и банально, потому что я тупой урод.
+        //Сделан патологически банально, потому что я тупой урод.
         //Отстань!?
         void TabsSwitcher()
         {

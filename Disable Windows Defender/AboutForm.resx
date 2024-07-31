@@ -195,7 +195,7 @@
   <data name="pictureBox4.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        wgAADsIBFShKgAAAC+1JREFUeF7dW2lsVccVpoWk6p6qW6LSVt3bUPVHV1Xdf0SVqi4/IrpFaqtEShu1
+        vQAADr0BR/uQrQAAC+1JREFUeF7dW2lsVccVpoWk6p6qW6LSVt3bUPVHV1Xdf0SVqi4/IrpFaqtEShu1
         pGoVYjD281scDGaRjWMECRFGNBEiKGAUKdiQAgEhUMCGQFNHYIwLAcxm1pTFnun5vpm5uX6ee9999nvP
         UY90dO+7d86Zc745c87MvfdNyiet9WTht9mfJPn9drD9+f9LcB5HdenSB9WBAz9XXV2/U0eOfB2AWB43
         CE6P8JQ8xrURwFeUYASP27f/QWWzl/SsWVpVVQ3r2bO1Wrr0n+rcuY/ZdgSpGIJj0J9EFm1s28qB4QxT
@@ -2863,7 +2863,7 @@
   <data name="pictureBox1.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
-        EQAACxEBf2RfkQAAC0ZJREFUeF7t3WnM7UQZB3BEUEFETRSXCCJEQKKicYkBETc0IoSIoqgEjIhijDuL
+        DAAACwwBP0AiyAAAC0ZJREFUeF7t3WnM7UQZB3BEUEFETRSXCCJEQKKicYkBETc0IoSIoqgEjIhijDuL
         H1yiiRsoiAGMXBQEhASCK5rgBkZF4wbXgIoLjtEY/ODGDQqaeP0/Y3vuvMO/pzPTaTvTmQ+/eed9Ts/T
         OV2nPT3tdlu3bq0KRoNVOWiwKgcNVuWgwaocNFiVgwarctBgVQ4arMpBg1U5aLAqBw1W5aDBqhw0WJWD
         BpdP3QP2hifBUxr7w858+OWiweXRM/t42AQ3A8KdboWL4bWAhYLlWw4aXAZ1GJwPvwCEgqFQlwIWIDae
@@ -2913,6 +2913,18 @@
         v/8ECK3IhZ7y5M53bRt2+WiwHHr3cDiMcv+dHNBgVQ4arMpBg1U5aLAqBw1W5aDBqhw0WJWDBqty0GBV
         DhqsykGDVTlosCoHDVal2Lrd/wDSBwhEePZQFwAAAABJRU5ErkJggg==
 </value>
+  </data>
+  <data name="WhatsNewText.Text" xml:space="preserve">
+    <value>• Мелкие внешние доработки
+• Теперь msgbox не появляется многократно
+• Также пока отключён msgbox при попытке запустить копию программы
+(не получилось запретить его копии, а делать отдельную форму лень)
+
+• Исправлена ошибка с msgbox, который исчезал под "DWD - About", которое в свою очередь тоже
+было не закрываемо, из-за появившегося msgbox и держалось "поверх всех окон".
+Закрыть всё это можно было только найдя msgbox в ALT+TAB и закрыв его, разблокировать все функции программы.
+- Контекстное меню в трее тоже не откликалось, исправлено.
+- Теперь msgbox не прячется внизу, а всегда остаётся поверх окон пока не закроется.</value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>56</value>

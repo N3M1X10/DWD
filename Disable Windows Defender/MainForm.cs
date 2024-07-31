@@ -14,6 +14,11 @@ namespace Disable_Windows_Defender
         private string FuncIsWorkingText = "Бдение за дефендером активно . . .";
         string SelfFileName = System.IO.Path.GetFileName(Application.ExecutablePath);
 
+        //Получить версию сборки чтобы потом впихнуть куда-нибудь где надо оно
+        readonly static System.Reflection.Assembly assemblyBlock = System.Reflection.Assembly.GetExecutingAssembly();
+        readonly static FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assemblyBlock.Location);
+        readonly static string ProjectVersion = fvi.FileVersion;
+
         public MainForm()
         {
             AddExclusionToDefender();
@@ -32,6 +37,7 @@ namespace Disable_Windows_Defender
             }
 
             InitializeComponent();
+            cornerversionlabel.Text = ProjectVersion;
             TrayIcon.Visible = true;
 
             //плавное появление
@@ -136,11 +142,29 @@ namespace Disable_Windows_Defender
         // конец скрывалки
         //
 
+        private void TrayIcon_DoubleClick(object sender, EventArgs e)
+        {
+            AboutForm about;
+            about = new AboutForm();
+
+            bool able = false;
+            foreach (Form f in Application.OpenForms)
+                if (f.Name == "AboutForm")
+                    able = true;
+            if (!able)
+            {
+                about = new AboutForm();
+                about.Show();
+            }
+            else
+            {
+                WindowAlreadyExist();
+            }
+        }
         private void quitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
-
         private void disableWinDefenderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //Меняем нажимаемость кнопки и текст на ней
@@ -161,33 +185,6 @@ namespace Disable_Windows_Defender
                 }).WaitForExit();
             } //Модуль цмд-шника
         }
-
-
-        private void TrayIcon_DoubleClick(object sender, EventArgs e)
-        {
-            AboutForm about;
-            about = new AboutForm();
-
-            bool able = false;
-            foreach (Form f in Application.OpenForms)
-                if (f.Name == "AboutForm")
-                    able = true;
-            if (!able)
-            {
-                about = new AboutForm();
-                about.Show();
-            }
-            else
-            {
-                MessageBox.Show(
-                    "Кажется это окно уже где-то есть ◑﹏◐",
-                    "DWD : Окно уже открыто",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Exclamation
-                    );
-            }
-        }
-
         private void restoreWinDefenderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $false\"");
@@ -204,7 +201,6 @@ namespace Disable_Windows_Defender
             disableWinDefenderToolStripMenuItem.Enabled = true;
             disableWinDefenderToolStripMenuItem.Text = disabletext;
         }
-
         void AboutButton_Click(object sender, EventArgs e)
         {
             AboutForm about;
@@ -221,12 +217,45 @@ namespace Disable_Windows_Defender
             }
             else
             {
-                MessageBox.Show(
-                    "Кажется это окно уже где-то есть ◑﹏◐",
-                    "DWD : Окно уже открыто",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Exclamation
-                    );
+                WindowAlreadyExist();
+            }
+        }
+        
+        //Окно уже где-то есть
+        bool WAEfuncisable = true;
+        void WindowAlreadyExist()
+        {
+            //Запрет на вызов кучи мсгбоксов
+
+            if (WAEfuncisable)
+            {
+                //запрещаем вызывать часть функции с мсгбоксом
+                WAEfuncisable = false;
+                TopMost = true;
+
+                //мсгбокс вызван
+                var msgboxexist = MessageBox.Show(
+                "Кажется это окно уже где-то есть ◑﹏◐",
+                "DWD : Окно уже открыто",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation
+
+              );
+
+
+                //мсгбокс смотрит нажата ли кнопка ОК
+                msgboxexist = DialogResult.OK;
+                
+                //проверка нажатия кнопки ОК на мсгбоксе
+                if (msgboxexist.ToString() == "OK")
+                {
+                    //Вновь разрешаем вызов мсгбокса после его закрытия
+                    TopMost = false;
+                    WAEfuncisable = true;
+                    //Вызов окна Эбаут
+                    
+                }
+
             }
         }
     }

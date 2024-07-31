@@ -42,10 +42,12 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.BGpanel = new System.Windows.Forms.Panel();
+            this.cornerversionlabel = new System.Windows.Forms.Label();
             this.contextMenu.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            this.BGpanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // TrayIcon
@@ -66,7 +68,7 @@
             this.quitToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
             this.contextMenu.ShowImageMargin = false;
-            this.contextMenu.Size = new System.Drawing.Size(285, 124);
+            this.contextMenu.Size = new System.Drawing.Size(285, 146);
             // 
             // disableWinDefenderToolStripMenuItem
             // 
@@ -168,11 +170,24 @@
             // BGpanel
             // 
             this.BGpanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.BGpanel.Controls.Add(this.cornerversionlabel);
             this.BGpanel.Location = new System.Drawing.Point(0, 0);
             this.BGpanel.Margin = new System.Windows.Forms.Padding(0);
             this.BGpanel.Name = "BGpanel";
             this.BGpanel.Size = new System.Drawing.Size(600, 350);
             this.BGpanel.TabIndex = 5;
+            // 
+            // cornerversionlabel
+            // 
+            this.cornerversionlabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.cornerversionlabel.AutoSize = true;
+            this.cornerversionlabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.cornerversionlabel.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.cornerversionlabel.Location = new System.Drawing.Point(552, 330);
+            this.cornerversionlabel.Name = "cornerversionlabel";
+            this.cornerversionlabel.Size = new System.Drawing.Size(44, 16);
+            this.cornerversionlabel.TabIndex = 0;
+            this.cornerversionlabel.Text = "0.0.0.0";
             // 
             // MainForm
             // 
@@ -196,6 +211,8 @@
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            this.BGpanel.ResumeLayout(false);
+            this.BGpanel.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -214,6 +231,7 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Panel BGpanel;
+        private System.Windows.Forms.Label cornerversionlabel;
     }
 }
 
