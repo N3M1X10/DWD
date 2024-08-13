@@ -1,5 +1,5 @@
-G:\Codes\C#\Projects\Windows Forms\Disable Windows Defender\bin\Release\Disable Windows Defender.exe
 G:\Codes\C#\Projects\Windows Forms\Disable Windows Defender\bin\Release\Disable Windows Defender.exe.config
+G:\Codes\C#\Projects\Windows Forms\Disable Windows Defender\bin\Release\Disable Windows Defender.exe
 G:\Codes\C#\Projects\Windows Forms\Disable Windows Defender\bin\Release\Disable Windows Defender.pdb
 G:\Codes\C#\Projects\Windows Forms\Disable Windows Defender\obj\Release\Disable Windows Defender.csproj.AssemblyReference.cache
 G:\Codes\C#\Projects\Windows Forms\Disable Windows Defender\obj\Release\Disable_Windows_Defender.AboutForm.resources

@@ -36,15 +36,15 @@ namespace Disable_Windows_Defender
 
                 //PAEshow();
 
-                void PAEshow()
-                {
-                    var PAEmsgbox = MessageBox.Show(
-                        "Кажется программа уже запущена ◑﹏◐ \nПроверьте её в трее :)",
-                        "DWD : Программа уже запущена",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Exclamation
-                        );
-                }
+                //void PAEshow()
+                //{
+                //    var PAEmsgbox = MessageBox.Show(
+                //        "Кажется программа уже запущена ◑﹏◐ \nПроверьте её в трее :)",
+                //        "DWD : Программа уже запущена",
+                //        MessageBoxButtons.OK,
+                //        MessageBoxIcon.Exclamation
+                //        );
+                //}
 
                 _syncObject = new Mutex(true, UniqueValue, out applicationRun);
                 if (!applicationRun)

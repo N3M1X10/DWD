@@ -79,7 +79,7 @@
             this.disableWinDefenderToolStripMenuItem.Name = "disableWinDefenderToolStripMenuItem";
             this.disableWinDefenderToolStripMenuItem.Size = new System.Drawing.Size(284, 30);
             this.disableWinDefenderToolStripMenuItem.Text = "Отключить Мониторинг";
-            this.disableWinDefenderToolStripMenuItem.Click += new System.EventHandler(this.disableWinDefenderToolStripMenuItem_Click);
+            this.disableWinDefenderToolStripMenuItem.Click += new System.EventHandler(this.DisableWinDefenderToolStripMenuItem_Click);
             // 
             // restoreWinDefenderToolStripMenuItem
             // 
@@ -88,7 +88,7 @@
             this.restoreWinDefenderToolStripMenuItem.Name = "restoreWinDefenderToolStripMenuItem";
             this.restoreWinDefenderToolStripMenuItem.Size = new System.Drawing.Size(284, 30);
             this.restoreWinDefenderToolStripMenuItem.Text = "Восстановить Мониторинг";
-            this.restoreWinDefenderToolStripMenuItem.Click += new System.EventHandler(this.restoreWinDefenderToolStripMenuItem_Click);
+            this.restoreWinDefenderToolStripMenuItem.Click += new System.EventHandler(this.RestoreWinDefenderToolStripMenuItem_Click);
             // 
             // AboutButton
             // 
@@ -106,7 +106,7 @@
             this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
             this.quitToolStripMenuItem.Size = new System.Drawing.Size(284, 30);
             this.quitToolStripMenuItem.Text = "Выход";
-            this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
+            this.quitToolStripMenuItem.Click += new System.EventHandler(this.QuitToolStripMenuItem_Click);
             // 
             // label1
             // 

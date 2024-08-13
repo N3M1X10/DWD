@@ -3,39 +3,32 @@ using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.ComponentModel;
+using System.Text;
+using System.IO;
+using Microsoft.Win32;
+using System.Reflection;
 
 namespace Disable_Windows_Defender
 {
     public partial class MainForm : Form
     {
+        //говорим циклу, надо ли бдеть за дефендером
         bool WDdisabled = false;
-        private string disabletext = "Отключить Мониторинг";
-        private string FuncIsWorkingText = "Бдение за дефендером активно . . .";
-        string SelfFileName = System.IO.Path.GetFileName(Application.ExecutablePath);
 
+        //имя исполняемого файла данной сборки
+        readonly string SelfFileName = Path.GetFileName(Application.ExecutablePath);
+
+        /////имена для контролов для подставки
+        private readonly string disabletext = "Отключить Мониторинг";
+        private readonly string FuncIsWorkingText = "Бдение за дефендером активно . . .";
         //Получить версию сборки чтобы потом впихнуть куда-нибудь где надо оно
-        readonly static System.Reflection.Assembly assemblyBlock = System.Reflection.Assembly.GetExecutingAssembly();
+        readonly static Assembly assemblyBlock = Assembly.GetExecutingAssembly();
         readonly static FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assemblyBlock.Location);
+        //Переменная для подставки в контролы
         readonly static string ProjectVersion = fvi.FileVersion;
 
         public MainForm()
         {
-            AddExclusionToDefender();
-            void AddExclusionToDefender() {
-                Cmd($"powershell.exe Add-MpPreference -ExclusionPath " + "\'" + SelfFileName + "\'");
-                void Cmd(string line)
-                {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = "cmd",
-                        Arguments = $"/c {line}",
-                        WindowStyle = ProcessWindowStyle.Hidden
-                    }).WaitForExit();
-                } //Модуль цмд-шника
-                
-            }
-
             InitializeComponent();
             cornerversionlabel.Text = ProjectVersion;
             TrayIcon.Visible = true;
@@ -83,15 +76,32 @@ namespace Disable_Windows_Defender
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            //Добавить в исключение дефендера
+            AddExclusionToDefender();
+            async void AddExclusionToDefender()
+            {
+                await Task.Delay(5000);
+                Cmd($"powershell.exe Add-MpPreference -ExclusionPath " + "\'" + SelfFileName + "\'");
+                void Cmd(string line)
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "cmd",
+                        Arguments = $"/c {line}",
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    }).WaitForExit();
+                } //Модуль цмд-шника
 
-            //выключили ли мы Дефендер из программы
-            WDdisabled = false;
+            }
+
+            RegistryCheck();
 
             //Цикловая функция
             bool cycleIsWorking = true;
             Cycle();
             async void Cycle()
             {
+                await Task.Delay(2000);
                 while (cycleIsWorking)
                 {
                     // Тело цикла
@@ -119,6 +129,54 @@ namespace Disable_Windows_Defender
             }
         }
 
+        void RegistryCheck()
+        {
+            ////АВТОЗАПУСК
+            string regStartupKey = "Disable Windows Defender";
+            RegistryKey reg;
+            reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+            string myregkey = (string)reg.GetValue(regStartupKey);
+            string mycurrentpath = Assembly.GetExecutingAssembly().Location;
+
+            if (myregkey != null) //если значение есть
+            {
+                //MessageBox.Show("Ключ нашёл");
+
+                if (myregkey != mycurrentpath) //если не совпадает путь то обновить на текущий
+                {
+                    //MessageBox.Show("Ключ несовпал. Обновляю на текущий");
+                    reg.SetValue(regStartupKey, mycurrentpath);
+                    reg.Flush();
+                    reg.Close();
+                }
+            }
+
+            /////Авто отключение дефендера (автобдение при запуске)
+            //чекбокс жмяк
+            reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+            string doAutoDisableKey = (string)reg.GetValue("doAutoDisable");
+
+            if (doAutoDisableKey != null) //если есть ключик автобдения
+            {
+                if (doAutoDisableKey == "True")
+                {
+                    WDdisabled = true;
+                    //Меняем нажимаемость кнопки и текст на ней
+                    disableWinDefenderToolStripMenuItem.Enabled = false;
+                    disableWinDefenderToolStripMenuItem.Text = FuncIsWorkingText;
+                }
+                else
+                {
+                    WDdisabled = false;
+                }
+
+            }
+            else { WDdisabled = false; }
+
+            reg.Flush();
+            reg.Close();
+        }
+
         //
         // Скрывалка из Альт Таба
         //
@@ -142,6 +200,26 @@ namespace Disable_Windows_Defender
         // конец скрывалки
         //
 
+        void DisableWindowsDefender()
+        {
+            //Меняем нажимаемость кнопки и текст на ней
+            disableWinDefenderToolStripMenuItem.Enabled = false;
+            disableWinDefenderToolStripMenuItem.Text = FuncIsWorkingText;
+
+            //Отключаем мониторинг в реальном времени
+            Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $true\"");
+            WDdisabled = true; //Говорим циклу что надо держать дефендер выключенным
+
+            void Cmd(string line)
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Arguments = $"/c {line}",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }).WaitForExit();
+            } //Модуль цмд-шника
+        } //Включить бдение за дефендером
         private void TrayIcon_DoubleClick(object sender, EventArgs e)
         {
             AboutForm about;
@@ -161,31 +239,15 @@ namespace Disable_Windows_Defender
                 WindowAlreadyExist();
             }
         }
-        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void QuitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
         }
-        private void disableWinDefenderToolStripMenuItem_Click(object sender, EventArgs e)
+        private void DisableWinDefenderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Меняем нажимаемость кнопки и текст на ней
-            disableWinDefenderToolStripMenuItem.Enabled = false;
-            disableWinDefenderToolStripMenuItem.Text = FuncIsWorkingText;
-
-            //Отключаем мониторинг в реальном времени
-            Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $true\"");
-            WDdisabled = true; //Говорим циклу что надо держать дефендер выключенным
-
-            void Cmd(string line)
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "cmd",
-                    Arguments = $"/c {line}",
-                    WindowStyle = ProcessWindowStyle.Hidden
-                }).WaitForExit();
-            } //Модуль цмд-шника
+            DisableWindowsDefender();
         }
-        private void restoreWinDefenderToolStripMenuItem_Click(object sender, EventArgs e)
+        private void RestoreWinDefenderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $false\"");
             WDdisabled = false;

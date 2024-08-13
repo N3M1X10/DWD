@@ -35,6 +35,8 @@
             this.ProgNamePic = new System.Windows.Forms.PictureBox();
             this.ProgNameText = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.RunWhenStartupCheck = new System.Windows.Forms.CheckBox();
+            this.doAutoDisableCheck = new System.Windows.Forms.CheckBox();
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.discordButton = new System.Windows.Forms.Button();
@@ -133,6 +135,8 @@
             this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(25)))), ((int)(((byte)(25)))), ((int)(((byte)(25)))));
+            this.panel2.Controls.Add(this.RunWhenStartupCheck);
+            this.panel2.Controls.Add(this.doAutoDisableCheck);
             this.panel2.Controls.Add(this.pictureBox4);
             this.panel2.Controls.Add(this.pictureBox3);
             this.panel2.Controls.Add(this.discordButton);
@@ -144,6 +148,30 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(985, 50);
             this.panel2.TabIndex = 5;
+            // 
+            // RunWhenStartupCheck
+            // 
+            this.RunWhenStartupCheck.AutoSize = true;
+            this.RunWhenStartupCheck.ForeColor = System.Drawing.SystemColors.Control;
+            this.RunWhenStartupCheck.Location = new System.Drawing.Point(564, 28);
+            this.RunWhenStartupCheck.Name = "RunWhenStartupCheck";
+            this.RunWhenStartupCheck.Size = new System.Drawing.Size(192, 17);
+            this.RunWhenStartupCheck.TabIndex = 8;
+            this.RunWhenStartupCheck.Text = "Запускать при запуске системы";
+            this.RunWhenStartupCheck.UseVisualStyleBackColor = true;
+            this.RunWhenStartupCheck.CheckedChanged += new System.EventHandler(this.RunWhenStartupCheck_CheckedChanged);
+            // 
+            // doAutoDisableCheck
+            // 
+            this.doAutoDisableCheck.AutoSize = true;
+            this.doAutoDisableCheck.ForeColor = System.Drawing.SystemColors.Control;
+            this.doAutoDisableCheck.Location = new System.Drawing.Point(564, 7);
+            this.doAutoDisableCheck.Name = "doAutoDisableCheck";
+            this.doAutoDisableCheck.Size = new System.Drawing.Size(194, 17);
+            this.doAutoDisableCheck.TabIndex = 7;
+            this.doAutoDisableCheck.Text = "Включать бдение автоматически";
+            this.doAutoDisableCheck.UseVisualStyleBackColor = true;
+            this.doAutoDisableCheck.CheckedChanged += new System.EventHandler(this.DoAutoDisableCheck_CheckedChanged);
             // 
             // pictureBox4
             // 
@@ -181,7 +209,7 @@
             this.discordButton.TabIndex = 4;
             this.discordButton.Text = "Discord";
             this.discordButton.UseVisualStyleBackColor = false;
-            this.discordButton.Click += new System.EventHandler(this.discordButton_Click);
+            this.discordButton.Click += new System.EventHandler(this.DiscordButton_Click);
             // 
             // panel3
             // 
@@ -411,7 +439,8 @@
             this.WhatsNewText.Name = "WhatsNewText";
             this.WhatsNewText.Size = new System.Drawing.Size(949, 610);
             this.WhatsNewText.TabIndex = 1;
-            this.WhatsNewText.Text = resources.GetString("WhatsNewText.Text");
+            this.WhatsNewText.Text = "• Добавлена опция автоматического отключения Windows Defender при запуске програм" +
+    "мы\r\n• Добавлена опция включения программы в автозагрузку";
             // 
             // AboutForm
             // 
@@ -430,9 +459,11 @@
             this.Name = "AboutForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Disable Windows Defender - About";
+            this.Load += new System.EventHandler(this.AboutForm_Load);
             this.ProgNameWrapper.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ProgNamePic)).EndInit();
             this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox4)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).EndInit();
             this.panel3.ResumeLayout(false);
@@ -478,5 +509,7 @@
         private System.Windows.Forms.Panel WhatsNewPanel;
         private System.Windows.Forms.Label WhatsNewText;
         private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.CheckBox doAutoDisableCheck;
+        private System.Windows.Forms.CheckBox RunWhenStartupCheck;
     }
 }
