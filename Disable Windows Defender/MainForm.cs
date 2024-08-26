@@ -15,9 +15,6 @@ namespace Disable_Windows_Defender
         //говорим циклу, надо ли бдеть за дефендером
         bool WDdisabled = false;
 
-        //имя исполняемого файла данной сборки
-        readonly string SelfFileName = Path.GetFileName(Application.ExecutablePath);
-
         /////имена для контролов для подставки
         private readonly string disabletext = "Отключить Мониторинг";
         private readonly string FuncIsWorkingText = "Бдение за дефендером активно . . .";
@@ -76,23 +73,6 @@ namespace Disable_Windows_Defender
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            //Добавить в исключение дефендера
-            AddExclusionToDefender();
-            async void AddExclusionToDefender()
-            {
-                await Task.Delay(5000);
-                Cmd($"powershell.exe Add-MpPreference -ExclusionPath " + "\'" + SelfFileName + "\'");
-                void Cmd(string line)
-                {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = "cmd",
-                        Arguments = $"/c {line}",
-                        WindowStyle = ProcessWindowStyle.Hidden
-                    }).WaitForExit();
-                } //Модуль цмд-шника
-
-            }
 
             RegistryCheck();
 
@@ -101,11 +81,10 @@ namespace Disable_Windows_Defender
             Cycle();
             async void Cycle()
             {
-                await Task.Delay(2000);
+                await Task.Delay(1000);
                 while (cycleIsWorking)
                 {
                     // Тело цикла
-
                     if (WDdisabled)
                     {
                         //цикл бдения за мониторингом
@@ -124,7 +103,7 @@ namespace Disable_Windows_Defender
                         FileName = "cmd",
                         Arguments = $"/c {line}",
                         WindowStyle = ProcessWindowStyle.Hidden
-                    }).WaitForExit();
+                    }).Close();
                 } //Модуль цмд-шника
             }
         }
@@ -318,6 +297,26 @@ namespace Disable_Windows_Defender
                     
                 }
 
+            }
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+            AboutForm about;
+            about = new AboutForm();
+
+            bool able = false;
+            foreach (Form f in Application.OpenForms)
+                if (f.Name == "AboutForm")
+                    able = true;
+            if (!able)
+            {
+                about = new AboutForm();
+                about.Show();
+            }
+            else
+            {
+                WindowAlreadyExist();
             }
         }
     }

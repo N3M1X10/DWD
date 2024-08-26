@@ -43,6 +43,7 @@
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.BGpanel = new System.Windows.Forms.Panel();
             this.cornerversionlabel = new System.Windows.Forms.Label();
+            this.BetaLabel = new System.Windows.Forms.Label();
             this.contextMenu.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -68,7 +69,7 @@
             this.quitToolStripMenuItem});
             this.contextMenu.Name = "contextMenu";
             this.contextMenu.ShowImageMargin = false;
-            this.contextMenu.Size = new System.Drawing.Size(285, 146);
+            this.contextMenu.Size = new System.Drawing.Size(285, 124);
             // 
             // disableWinDefenderToolStripMenuItem
             // 
@@ -155,6 +156,7 @@
             this.pictureBox1.TabIndex = 3;
             this.pictureBox1.TabStop = false;
             this.pictureBox1.WaitOnLoad = true;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // pictureBox2
             // 
@@ -170,6 +172,7 @@
             // BGpanel
             // 
             this.BGpanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.BGpanel.Controls.Add(this.BetaLabel);
             this.BGpanel.Controls.Add(this.cornerversionlabel);
             this.BGpanel.Location = new System.Drawing.Point(0, 0);
             this.BGpanel.Margin = new System.Windows.Forms.Padding(0);
@@ -188,6 +191,18 @@
             this.cornerversionlabel.Size = new System.Drawing.Size(44, 16);
             this.cornerversionlabel.TabIndex = 0;
             this.cornerversionlabel.Text = "0.0.0.0";
+            // 
+            // BetaLabel
+            // 
+            this.BetaLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.BetaLabel.AutoSize = true;
+            this.BetaLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BetaLabel.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.BetaLabel.Location = new System.Drawing.Point(2, 330);
+            this.BetaLabel.Name = "BetaLabel";
+            this.BetaLabel.Size = new System.Drawing.Size(35, 16);
+            this.BetaLabel.TabIndex = 0;
+            this.BetaLabel.Text = "Beta";
             // 
             // MainForm
             // 
@@ -232,6 +247,7 @@
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.Panel BGpanel;
         private System.Windows.Forms.Label cornerversionlabel;
+        private System.Windows.Forms.Label BetaLabel;
     }
 }
 

@@ -14,9 +14,12 @@ namespace Disable_Windows_Defender
     public partial class AboutForm : Form
     {
         //Получить версию сборки чтобы потом впихнуть куда-нибудь где надо оно
-        readonly static System.Reflection.Assembly assemblyBlock = System.Reflection.Assembly.GetExecutingAssembly();
+        readonly static Assembly assemblyBlock = Assembly.GetExecutingAssembly();
         readonly static FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assemblyBlock.Location);
         readonly static string ProjectVersion = fvi.FileVersion;
+
+        //имя исполняемого файла данной сборки
+        readonly string SelfFileName = Path.GetFileName(Application.ExecutablePath);
 
         public AboutForm()
         {
@@ -47,6 +50,7 @@ namespace Disable_Windows_Defender
             RegistryCheck();
         }
 
+        //Функция проверки Ресстра и взаимодействия с ним
         void RegistryCheck()
         {
             string regStartupKey = "Disable Windows Defender";
@@ -193,66 +197,87 @@ namespace Disable_Windows_Defender
 
 
         //Переключения между вкладками
-        bool WhatsNewIsSelected = false;
-        bool AboutIsSelected = true; //стартовая страница
         private void SwitchToWhatsNew_Click(object sender, EventArgs e)
         {
             //ПЕРЕКЛЮЧИТЬСЯ НА "ЧТО НОВОГО"
-            WhatsNewIsSelected = true;
-            AboutIsSelected = false;
-            TabsSwitcher();
+            TabsSwitcher(false, false, true);
+        }
+        private void OtherOptionsButton_Click(object sender, EventArgs e)
+        {
+            TabsSwitcher(false, true, false);
         }
         private void SwitchToAbout_Click(object sender, EventArgs e)
         {
             //ПЕРЕКЛЮЧИТЬСЯ НА "О ПРОГРАММЕ"
-            WhatsNewIsSelected = !true;
-            AboutIsSelected = true;
-            TabsSwitcher();
+            TabsSwitcher(true, false, false);
         }
 
+
         //Свитчер окошек
-        //Сделан патологически банально, потому что я тупой урод.
+        //Сделан патологически банально и топорно, потому что я ещё учусь, тошнить на C#
         //Отстань!?
-        void TabsSwitcher()
+        void TabsSwitcher(bool isAbout, bool isOthers, bool isWhatsNew)
         {
-            if (AboutIsSelected)
+            Color disabledFore = Color.White;
+            Color disabledBack = ColorTranslator.FromHtml("#232323");
+
+            Color enabledFore = Color.Salmon;
+            Color enabledBack = ColorTranslator.FromHtml("#191919");
+
+            ////ЭЛЕМЕНТЫ
+            
+            //О программе
+            AboutWrap.Visible = false;
+            ProgNameWrapper.Visible = false;
+
+            //Что нового
+            WhatsNewFormHeader.Visible = false;
+            WhatsNewPanel.Visible = false;
+
+            //Опции
+            OtherOptionsPanel.Visible = false;
+
+            ////СТИЛИ
+
+            //Что нового
+            SwitchToWhatsNew.ForeColor = disabledFore;
+            SwitchToWhatsNew.BackColor = disabledBack;
+
+            //О программе
+            SwitchToAbout.ForeColor = disabledFore;
+            SwitchToAbout.BackColor = disabledBack;
+
+            //Опции
+            OtherOptionsButton.ForeColor = disabledFore;
+            OtherOptionsButton.BackColor = disabledBack;
+
+            //Триггеры условий
+            if (isAbout)
             {
-                //Элементы о программе ВКЛЮЧИТЬ
                 AboutWrap.Visible = true;
                 ProgNameWrapper.Visible = true;
 
-                //Элементы что нового ВЫКЛЮЧИТЬ
-                WhatsNewFormHeader.Visible = false;
-                WhatsNewPanel.Visible = false;
-
-                //Кнопки переключения ПОМЕНЯТЬ СТИЛИ МЕСТАМИ
-                SwitchToWhatsNew.ForeColor = Color.White;
-                SwitchToWhatsNew.BackColor = ColorTranslator.FromHtml("#232323");
-
-                SwitchToAbout.BackColor = ColorTranslator.FromHtml("#191919");
-                SwitchToAbout.ForeColor = Color.Salmon;
+                SwitchToAbout.ForeColor = enabledFore;
+                SwitchToAbout.BackColor = enabledBack;
             }
-
-            if (WhatsNewIsSelected)
+            if (isWhatsNew)
             {
-                //Элементы о программе ВЫКЛЮЧИТЬ
-                AboutWrap.Visible = false;
-                ProgNameWrapper.Visible = false;
-
-                //Элементы что нового ВКЛЮЧИТЬ
                 WhatsNewFormHeader.Visible = true;
                 WhatsNewPanel.Visible = true;
 
-                //Кнопки переключения ПОМЕНЯТЬ СТИЛИ МЕСТАМИ
-                SwitchToWhatsNew.ForeColor = Color.Salmon;
-                SwitchToWhatsNew.BackColor = ColorTranslator.FromHtml("#191919");
-                
-                SwitchToAbout.BackColor = ColorTranslator.FromHtml("#232323");
-                SwitchToAbout.ForeColor = Color.White;
+                SwitchToWhatsNew.ForeColor = enabledFore;
+                SwitchToWhatsNew.BackColor = enabledBack;
             }
+            if (isOthers)
+            {
+                OtherOptionsPanel.Visible = true;
 
+                OtherOptionsButton.ForeColor = enabledFore;
+                OtherOptionsButton.BackColor = enabledBack;
+            }
         }
 
+        //Опции
         private void DoAutoDisableCheck_CheckedChanged(object sender, EventArgs e)
         {
             ToggleAutoDisable();
@@ -262,7 +287,8 @@ namespace Disable_Windows_Defender
             ToggleRunWhenStartup();
         }
 
-        //Реестр
+
+        ////Реестр
 
         //Запуск программы с системой
         void ToggleRunWhenStartup()
@@ -284,7 +310,7 @@ namespace Disable_Windows_Defender
                 reg.Close();
             }
         }
-
+        //Автозапуск бдения
         void ToggleAutoDisable()
         {
             RegistryKey reg;
@@ -292,6 +318,133 @@ namespace Disable_Windows_Defender
             reg.SetValue("doAutoDisable", doAutoDisableCheck.Checked);
             reg.Flush();
             reg.Close();
+        }
+
+        ////
+        ////ДРУГИЕ ОПЦИИ
+        ////
+        private void WFdisableButton_Click(object sender, EventArgs e)
+        {
+            FireWallToggle(false);
+        }
+        private void WFenableButton_Click(object sender, EventArgs e)
+        {
+            FireWallToggle(true);
+        }
+        void FireWallToggle(bool isEnabled)
+        {
+            if (isEnabled) {
+                Cmd($"NetSh Advfirewall set allprofiles state on");
+                MessageBox.Show("Брандмауэр включён");
+                WFdisableButton.Enabled = true;
+                WFenableButton.Enabled = true;
+            }
+            if (!isEnabled) {
+                Cmd($"NetSh Advfirewall set allprofiles state off");
+                MessageBox.Show("Брандмауэр выключен");
+                WFdisableButton.Enabled = true;
+                WFenableButton.Enabled = true;
+            }
+
+            void Cmd(string line)
+            {
+                WFdisableButton.Enabled = false;
+                WFenableButton.Enabled = false;
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Arguments = $"/c {line}",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }).WaitForExit();
+            } //Модуль цмд-шника
+        }
+        //Добавить эту программу в исключения Defender
+        private void AddToExtensionsButton_Click(object sender, EventArgs e)
+        {
+            Cmd($"powershell.exe Add-MpPreference -ExclusionProcess " + "\'" + SelfFileName + "\'");
+            MessageBox.Show("Исключение добавлено");
+            void Cmd(string line)
+            {
+                AddToExtensionsButton.Enabled = false;
+                RemoveFromExtensionsButton.Enabled = false;
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Arguments = $"/c {line}",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }).WaitForExit();
+            AddToExtensionsButton.Enabled = true;
+            RemoveFromExtensionsButton.Enabled = true;
+            } //Модуль цмд-шника
+        }
+        private void RemoveFromExtensionsButton_Click(object sender, EventArgs e)
+        {
+            Cmd($"powershell.exe Remove-MpPreference -ExclusionProcess " + "\'" + SelfFileName + "\'");
+            MessageBox.Show("Исключение удалено");
+            void Cmd(string line)
+            {
+                AddToExtensionsButton.Enabled = false;
+                RemoveFromExtensionsButton.Enabled = false;
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Arguments = $"/c {line}",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }).WaitForExit();
+                AddToExtensionsButton.Enabled = true;
+                RemoveFromExtensionsButton.Enabled = true;
+            } //Модуль цмд-шника
+        }
+
+        //Полное включение или выключение Defender
+        private void DisableEntireDefenderButton_Click(object sender, EventArgs e)
+        {
+            DisableEntireDefenderButton.Enabled = false;
+            RegistryKey reg;
+            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender");
+            reg.SetValue("DisableAntiSpyware", 1);
+            reg.SetValue("DisableAntiVirus", 1);
+
+            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\MpEngine");
+            reg.SetValue("MpEnablePus", 0);
+
+            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection");
+            reg.SetValue("DisableBehaviorMonitoring", 1);
+            reg.SetValue("DisableIOAVProtection", 1);
+            reg.SetValue("DisableOnAccessProtection", 1);
+            reg.SetValue("DisableRealtimeMonitoring", 1);
+            reg.SetValue("DisableRoutinelyTakingAction", 1);
+            reg.SetValue("DisableScanOnRealtimeEnable", 1);
+
+            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Reporting");
+            reg.SetValue("DisableEnhancedNotifications", 1);
+
+            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\SpyNet");
+            reg.SetValue("DisableBlockAtFirstSeen", 1);
+            reg.SetValue("SpynetReporting", 0);
+            reg.SetValue("SubmitSamplesConsent", 2);
+            
+            reg.Flush();
+            reg.Close();
+
+            MessageBox.Show("Полное отключение функций завершено. \nКлючи реестра внесены. \nМесто работ в реестре: \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\\" ");
+            DisableEntireDefenderButton.Enabled = true;
+        }
+        private void RestoreEntireDefenderButton_Click(object sender, EventArgs e)
+        {
+            RestoreEntireDefenderButton.Enabled = false;
+            RegistryKey reg;
+            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender");
+                reg.DeleteValue("DisableAntiVirus", false);
+                reg.DeleteValue("DisableAntiSpyware", false);
+                reg.DeleteSubKey("MpEngine", false);
+                reg.DeleteSubKey("Real-Time Protection", false);
+                reg.DeleteSubKey("Reporting", false);
+                reg.DeleteSubKey("SpyNet", false);
+            reg.Flush();
+            reg.Close();
+            MessageBox.Show("Восстановление функций Windows Defender завершено!");
+            RestoreEntireDefenderButton.Enabled = true;
         }
 
     }
