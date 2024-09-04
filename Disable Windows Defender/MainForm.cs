@@ -33,7 +33,7 @@ namespace Disable_Windows_Defender
             //плавное появление
 
             Opacity = 0;
-            System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+            Timer timer = new Timer();
             timer.Tick += new EventHandler((sender, e) =>
             {
                 if ((Opacity += 0.05d) >= 1) timer.Stop();
@@ -60,7 +60,7 @@ namespace Disable_Windows_Defender
                     if (!DisappearingIsReady)
                     {
                         Opacity = 1;
-                    System.Windows.Forms.Timer timer2 = new System.Windows.Forms.Timer();
+                    Timer timer2 = new Timer();
                         timer2.Tick += new EventHandler((sender, e) =>
                         {
                             if ((Opacity -= 0.05d) <= 0) timer2.Stop(); HideFromAltTab(Handle);
@@ -75,12 +75,14 @@ namespace Disable_Windows_Defender
         {
 
             RegistryCheck();
+            RegistryDialUp(true);
 
             //Цикловая функция
             bool cycleIsWorking = true;
             Cycle();
             async void Cycle()
             {
+                int cyctimer;
                 await Task.Delay(1000);
                 while (cycleIsWorking)
                 {
@@ -88,74 +90,161 @@ namespace Disable_Windows_Defender
                     if (WDdisabled)
                     {
                         //цикл бдения за мониторингом
-                        disableWinDefenderToolStripMenuItem.Enabled = false;
-                        Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $true\"");
+                        DisableWindowsDefender(false);
+                        cyctimer = 40000;
+
                     }
+                    else { cyctimer = 1000; }
 
                     //Задержка цикла бдения
-                    await Task.Delay(40000);
+                    await Task.Delay(cyctimer);
                 }
-                //Функция с цмд
-                void Cmd(string line)
-                {
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = "cmd",
-                        Arguments = $"/c {line}",
-                        WindowStyle = ProcessWindowStyle.Hidden
-                    }).Close();
-                } //Модуль цмд-шника
             }
         }
 
         void RegistryCheck()
         {
             ////АВТОЗАПУСК
-            string regStartupKey = "Disable Windows Defender";
             RegistryKey reg;
-            reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
-            string myregkey = (string)reg.GetValue(regStartupKey);
-            string mycurrentpath = Assembly.GetExecutingAssembly().Location;
+            string regStartupKeyName = "Disable Windows Defender";
 
-            if (myregkey != null) //если значение есть
+            reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
+            string myregkey = (string)reg.GetValue(regStartupKeyName, null);
+            string owncurrentpath = Assembly.GetExecutingAssembly().Location;
+
+            //Проверить и при надобности обновить путь ключа автозапуска
+            if (myregkey != null) //если значение есть то
             {
                 //MessageBox.Show("Ключ нашёл");
-
-                if (myregkey != mycurrentpath) //если не совпадает путь то обновить на текущий
+                if (myregkey != owncurrentpath) //если путь не совпал то обновить
                 {
-                    //MessageBox.Show("Ключ несовпал. Обновляю на текущий");
-                    reg.SetValue(regStartupKey, mycurrentpath);
-                    reg.Flush();
-                    reg.Close();
+                    //MessageBox.Show("Путь ключа несовпал. Обновляю на текущий");
+                    reg.SetValue(regStartupKeyName, owncurrentpath);
                 }
             }
 
-            /////Авто отключение дефендера (автобдение при запуске)
+            /////Автозапуск трекера(бдения) мониторинга дефендера
             //чекбокс жмяк
             reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
-            string doAutoDisableKey = (string)reg.GetValue("doAutoDisable");
+            string doAutoDisableKey = (string)reg.GetValue("doAutoDisable", null);
+            string isWinDefEntireDisabled = (string)reg.GetValue("isWindowsDefenderEntireDisabled", null);
 
-            if (doAutoDisableKey != null) //если есть ключик автобдения
+            if (isWinDefEntireDisabled != "True" && doAutoDisableKey != null) //если WD не выключен полностью и есть ключик автобдения то
             {
                 if (doAutoDisableKey == "True")
                 {
+                    //автозапуск бдения включен, запускаю бдение
                     WDdisabled = true;
                     //Меняем нажимаемость кнопки и текст на ней
                     disableWinDefenderToolStripMenuItem.Enabled = false;
                     disableWinDefenderToolStripMenuItem.Text = FuncIsWorkingText;
+                    //Говорим что трекинг включен
+                    reg.SetValue("isWindowsDefenderDisabledByUser", "True");
                 }
-                else
-                {
-                    WDdisabled = false;
-                }
-
             }
-            else { WDdisabled = false; }
+
+            if (doAutoDisableKey != "True")
+            {
+                WDdisabled = false;
+                reg.SetValue("isWindowsDefenderDisabledByUser", "False");
+                //MessageBox.Show("Нет автозапуска трекера. Отменяю трекинг в коде");
+            }
 
             reg.Flush();
             reg.Close();
         }
 
+        async void RegistryDialUp(bool isCycWorking)
+        {
+            while (isCycWorking)
+            {
+                //Смотрим в реестр
+                RegistryKey reg;
+                reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+                string isWinDefDisabledByUser = (string)reg.GetValue("isWindowsDefenderDisabledByUser");
+                string isWinDefEntireDisabled = (string)reg.GetValue("isWindowsDefenderEntireDisabled");
+
+                //принимаем команду к циклу трекера через реестр
+                if (isWinDefDisabledByUser == "True")
+                {
+                    WDdisabled = true;
+                    //Нельзя удалять, потому что есть проверка этого параметра на другой форме
+                    //reg.DeleteValue("isWindowsDefenderDisabledByUser", false);
+                }
+                if (isWinDefDisabledByUser == "False")
+                {
+                    WDdisabled = false;
+                    //Нельзя удалять, потому что есть проверка этого параметра на другой форме
+                    //reg.DeleteValue("isWindowsDefenderDisabledByUser", false);
+                }
+
+
+                if (isWinDefEntireDisabled == "False") //Если WD не выключен полностью
+                {
+                    restoreWinDefenderToolStripMenuItem.Enabled = true;
+
+                    if (isWinDefDisabledByUser != "True")
+                    {
+                        //MessageBox.Show("Так как дефендер не выключен полностью, и трекинг не работает, верну кнопку в начальное состояние");
+                        disableWinDefenderToolStripMenuItem.Enabled = true;
+                        disableWinDefenderToolStripMenuItem.Text = disabletext;
+                    }
+                    
+                    //Проверить, надо ли включить Трекинг (если выключался Defender)
+                    reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+                    string IsThereNeedToLaunchTracking = (string)reg.GetValue("isDefenderDisabledWhileTrackingIsActive");
+                    if (IsThereNeedToLaunchTracking == "True")
+                    {
+                        reg.DeleteValue("isDefenderDisabledWhileTrackingIsActive");
+                        reg.SetValue("isWindowsDefenderDisabledByUser", "True");
+                        WDdisabled = true;
+                        disableWinDefenderToolStripMenuItem.Enabled = false;
+                        disableWinDefenderToolStripMenuItem.Text = FuncIsWorkingText;
+                    }
+                }
+                if (isWinDefEntireDisabled == "True")
+                {
+                    reg.SetValue("isWindowsDefenderDisabledByUser", "False");
+                    WDdisabled = false;
+                    RegistryCheck();
+                    restoreWinDefenderToolStripMenuItem.Enabled = false;
+                    disableWinDefenderToolStripMenuItem.Enabled = false;
+                    disableWinDefenderToolStripMenuItem.Text = "Windows Defender отключен полностью";
+                }
+                else
+                {
+                    if (WDdisabled)
+                    {
+                        disableWinDefenderToolStripMenuItem.Text = FuncIsWorkingText;
+                        disableWinDefenderToolStripMenuItem.Enabled = false;
+                    } 
+                    else 
+                    { 
+                        disableWinDefenderToolStripMenuItem.Text = disabletext;
+                        disableWinDefenderToolStripMenuItem.Enabled = true;
+                    }
+                }
+
+                reg = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender");
+                int isWDED = (int)reg.GetValue("DisableAntiVirus", 0);
+                if (isWDED == 1)
+                {
+                    reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+                    //Записать в своём кусте реестра о состоянии WD
+                    reg.SetValue("isWindowsDefenderEntireDisabled", "True");
+                } 
+                else 
+                {
+                    reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+                    reg.SetValue("isWindowsDefenderEntireDisabled", "False");
+                }
+
+
+                reg.Flush();
+                reg.Close();
+                await Task.Delay(1500);
+            }
+        }
         //
         // Скрывалка из Альт Таба
         //
@@ -179,25 +268,46 @@ namespace Disable_Windows_Defender
         // конец скрывалки
         //
 
-        void DisableWindowsDefender()
+        void DisableWindowsDefender(bool byUser)
         {
-            //Меняем нажимаемость кнопки и текст на ней
-            disableWinDefenderToolStripMenuItem.Enabled = false;
-            disableWinDefenderToolStripMenuItem.Text = FuncIsWorkingText;
-
-            //Отключаем мониторинг в реальном времени
-            Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $true\"");
-            WDdisabled = true; //Говорим циклу что надо держать дефендер выключенным
-
-            void Cmd(string line)
+            RegistryKey reg;
+            reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+            string isWinDefEntireDisabled = (string)reg.GetValue("isWindowsDefenderEntireDisabled", 0);
+            
+            if(isWinDefEntireDisabled == "True")
             {
-                Process.Start(new ProcessStartInfo
+                //MessageBox.Show("Нет надобности. Windows Defender отключен полностью");
+            }
+            else //если всё в порядке и дефендер включён
+            {
+                if (byUser == true)
                 {
-                    FileName = "cmd",
-                    Arguments = $"/c {line}",
-                    WindowStyle = ProcessWindowStyle.Hidden
-                }).WaitForExit();
-            } //Модуль цмд-шника
+                    WDdisabled = true; //Говорим циклу что надо держать дефендер выключенным
+                    reg.SetValue("isWindowsDefenderDisabledByUser", "True");
+                    reg.Flush();
+                    reg.Close();
+                }
+                //Меняем нажимаемость кнопки и текст на ней
+                disableWinDefenderToolStripMenuItem.Enabled = false;
+                disableWinDefenderToolStripMenuItem.Text = FuncIsWorkingText;
+
+                //Отключаем мониторинг в реальном времени
+                Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $true\"");
+
+                reg.Flush();
+                reg.Close();
+
+                void Cmd(string line)
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "cmd",
+                        Arguments = $"/c {line}",
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    }).Close();
+                } //Модуль цмд-шника
+            }
+
         } //Включить бдение за дефендером
         private void TrayIcon_DoubleClick(object sender, EventArgs e)
         {
@@ -224,12 +334,31 @@ namespace Disable_Windows_Defender
         }
         private void DisableWinDefenderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DisableWindowsDefender();
+            DisableWindowsDefender(true);
         }
         private void RestoreWinDefenderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $false\"");
-            WDdisabled = false;
+            RegistryKey reg;
+            reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+            string isWinDefEntireDisabled = (string)reg.GetValue("isWindowsDefenderEntireDisabled");
+
+            if (isWinDefEntireDisabled != "True")
+            {
+                Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $false\"");
+                WDdisabled = false;
+
+                reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+                reg.SetValue("isWindowsDefenderDisabledByUser", "False");
+            }
+            else
+            {
+                //MessageBox.Show("Нет надобности. Windows Defender отключен полностью");
+            }
+
+
+            reg.Flush();
+            reg.Close();
+
             void Cmd(string line)
             {
                 Process.Start(new ProcessStartInfo

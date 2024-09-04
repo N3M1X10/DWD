@@ -40,15 +40,15 @@
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.BGpanel = new System.Windows.Forms.Panel();
-            this.cornerversionlabel = new System.Windows.Forms.Label();
             this.BetaLabel = new System.Windows.Forms.Label();
+            this.cornerversionlabel = new System.Windows.Forms.Label();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
             this.contextMenu.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.BGpanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             this.SuspendLayout();
             // 
             // TrayIcon
@@ -97,7 +97,7 @@
             this.AboutButton.ForeColor = System.Drawing.SystemColors.Info;
             this.AboutButton.Name = "AboutButton";
             this.AboutButton.Size = new System.Drawing.Size(284, 30);
-            this.AboutButton.Text = "О программе";
+            this.AboutButton.Text = "О программе / Опции";
             this.AboutButton.Click += new System.EventHandler(this.AboutButton_Click);
             // 
             // quitToolStripMenuItem
@@ -148,7 +148,7 @@
             // pictureBox1
             // 
             this.pictureBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
+            this.pictureBox1.BackgroundImage = global::Disable_Windows_Defender.Properties.Resources.DWD64;
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBox1.Location = new System.Drawing.Point(0, 0);
             this.pictureBox1.Name = "pictureBox1";
@@ -157,17 +157,6 @@
             this.pictureBox1.TabStop = false;
             this.pictureBox1.WaitOnLoad = true;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
-            // 
-            // pictureBox2
-            // 
-            this.pictureBox2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox2.BackgroundImage")));
-            this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(56, 229);
-            this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(489, 92);
-            this.pictureBox2.TabIndex = 4;
-            this.pictureBox2.TabStop = false;
             // 
             // BGpanel
             // 
@@ -179,6 +168,18 @@
             this.BGpanel.Name = "BGpanel";
             this.BGpanel.Size = new System.Drawing.Size(600, 350);
             this.BGpanel.TabIndex = 5;
+            // 
+            // BetaLabel
+            // 
+            this.BetaLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.BetaLabel.AutoSize = true;
+            this.BetaLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.BetaLabel.ForeColor = System.Drawing.SystemColors.ButtonShadow;
+            this.BetaLabel.Location = new System.Drawing.Point(2, 330);
+            this.BetaLabel.Name = "BetaLabel";
+            this.BetaLabel.Size = new System.Drawing.Size(35, 16);
+            this.BetaLabel.TabIndex = 0;
+            this.BetaLabel.Text = "Beta";
             // 
             // cornerversionlabel
             // 
@@ -192,17 +193,16 @@
             this.cornerversionlabel.TabIndex = 0;
             this.cornerversionlabel.Text = "0.0.0.0";
             // 
-            // BetaLabel
+            // pictureBox2
             // 
-            this.BetaLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.BetaLabel.AutoSize = true;
-            this.BetaLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.BetaLabel.ForeColor = System.Drawing.SystemColors.ButtonShadow;
-            this.BetaLabel.Location = new System.Drawing.Point(2, 330);
-            this.BetaLabel.Name = "BetaLabel";
-            this.BetaLabel.Size = new System.Drawing.Size(35, 16);
-            this.BetaLabel.TabIndex = 0;
-            this.BetaLabel.Text = "Beta";
+            this.pictureBox2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox2.BackgroundImage")));
+            this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pictureBox2.Location = new System.Drawing.Point(56, 229);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(489, 92);
+            this.pictureBox2.TabIndex = 4;
+            this.pictureBox2.TabStop = false;
             // 
             // MainForm
             // 
@@ -225,9 +225,9 @@
             this.contextMenu.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.BGpanel.ResumeLayout(false);
             this.BGpanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
             this.ResumeLayout(false);
 
         }

@@ -140,61 +140,6 @@
 С уважением, n3m1x10 &lt;3</value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="ProgNamePic.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        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
-        /GD6H8tPCWdYNwsGAAAAAElFTkSuQmCC
-</value>
-  </data>
   <data name="pictureBox4.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
@@ -2743,6 +2688,9 @@
         RK5CYII=
 </value>
   </data>
+  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 10</value>
+  </metadata>
   <data name="pictureBox2.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
@@ -2917,18 +2865,82 @@
         DhqsykGDVTlosCoHDVal2Lrd/wDSBwhEePZQFwAAAABJRU5ErkJggg==
 </value>
   </data>
-  <data name="WhatsNewText.Text" xml:space="preserve">
-    <value>• Добавлен раздел с дополнительными быстрыми опциями управления средствами безопасности
-- Собрано несколько полезных функций для управления средствами безопасности
+  <data name="EnableUACbutton.ToolTip" xml:space="preserve">
+    <value>Активирует Контроль учётных записей (UAC)
 
-• Исправлены лаги программы из-за прописывания команд в PowerShell. 
-- Автоматические консольные команды теперь выполняются в многопотоке, и остальной код не ждёт их выполнения.
+Этот компонент запрашивает подтверждение действий, 
+требующих прав администратора, в целях защиты от 
+несанкционированного использования компьютера. 
 
-• Также, команда добавления в исключения, больше не прописывается автоматически. 
-- Вместо этого она доступна для активации вручную. Вместе с этим, теперь можно и удалить программу из исключений.</value>
+Если вы опытный пользователь, рекомендую отключить.</value>
   </data>
+  <data name="DisableUACbutton.ToolTip" xml:space="preserve">
+    <value>Отключает Контроль учётных записей (UAC)
+
+Этот компонент запрашивает подтверждение действий, 
+требующих прав администратора, в целях защиты от 
+несанкционированного использования компьютера. 
+
+Если вы опытный пользователь, рекомендую отключить.</value>
+  </data>
+  <data name="RestoreEntireDefenderButton.ToolTip" xml:space="preserve">
+    <value>Опция восстанавливает функции Windows Defender.
+
+ВНИМАНИЕ: Если Defender был выключен другим способом или другой программой, 
+то крайне рекомендуется и включать с помощью той же самой программы.
+Параметры используемые для этого могут различаться, а их там - ой как много.
+Если были затронуты какие-то параметры, которых нет тут - Windows Defender может не завестись.</value>
+  </data>
+  <data name="DisableEntireDefenderButton.ToolTip" xml:space="preserve">
+    <value>Опция вносит ключи реестра которые отключат Windows Defender и его функции.
+Пользоваться на свой страх и риск!
+
+P.S: Есть те параметры, отключение которых, могло бы вызвать проблемы с античитами, 
+Поэтому отключаются не абсолютно все части Defender.
+</value>
+  </data>
+  <data name="RenewIp4vbutton.ToolTip" xml:space="preserve">
+    <value>Опция запустит командную строку и введёт:
+Ipconfig /release &amp; Ipconfig /renew
+
+/release - Освобождение адреса IPv4 для указанного адаптера.
+/renew - Обновление адреса IPv4 для указанного адаптера.
+
+Это приведёт к отключению всех программ от сетевого адаптера 
+и сбросит IPv4 адресс 
+что значит потерю подключения программ к интернету</value>
+  </data>
+  <data name="OOflushDNSbutton.ToolTip" xml:space="preserve">
+    <value>Опция запустит командную строку и введёт:
+ipconfig /flushdns
+
+Очистит все IP-адреса или другие записи DNS из вашего кэша. 
+Это может помочь решить проблемы безопасности, подключения к Интернету и другие проблемы.
+Это не приведёт к отключению программ от сетевого адаптера.</value>
+  </data>
+  <data name="WhatsNewText.Text" xml:space="preserve">
+    <value>• Обновлён раздел с дополнительными быстрыми опциями управления средствами безопасности
+- Добавлены функции Очистки DNS кэша и перенастройки IPv4 адаптера (сброс IP адреса)
+- Также теперь можно открыть Брандмауэр Windows из программы
+- Добавлены функции включения/выключения Контроля Учётных Записей
+
+• Многочисленные доработки в коде
+- Налажена блокировка различных функций тогда, когда они не должны использоваться
+- Синхронизация команд. Функция трекинга за мониторингом (бдение) будет включена вновь, 
+если была включена до того как был выключен Windows Defender полностью
+
+• Внешний вид
+- Правки внешнего вида вкладки "Прочие опции"
+- Исправлены размеры иконок, разделены на разные размеры (на панели задач, в трее и в проводнике)
+
+• Теперь программа для работы требует Административных привилегий
+- По сути до этого программа могла работать некорректно, если бы она не имела таких прав</value>
+  </data>
+  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 10</value>
+  </metadata>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>56</value>
+    <value>32</value>
   </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

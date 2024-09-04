@@ -59,5 +59,15 @@ namespace Disable_Windows_Defender.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DWD64 {
+            get {
+                object obj = ResourceManager.GetObject("DWD64", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

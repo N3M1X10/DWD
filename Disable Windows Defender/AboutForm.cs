@@ -48,6 +48,7 @@ namespace Disable_Windows_Defender
         {
             await Task.Delay(100);
             RegistryCheck();
+            RegistryDialUp(true);
         }
 
         //Функция проверки Ресстра и взаимодействия с ним
@@ -66,25 +67,18 @@ namespace Disable_Windows_Defender
                 if (myregkey != mycurrentpath) //если не совпадает путь то обновить на текущий
                 {
                     //MessageBox.Show("Ключ несовпал. Обновляю на текущий");
-
                     reg.SetValue(regStartupKey, mycurrentpath);
-                    reg.Flush();
-                    reg.Close();
                 }
                 RunWhenStartupCheck.Checked = true; //синхронизировать галочку с статусом из реестра
             }
             if (myregkey == null)
             {
                 //MessageBox.Show("Не нашёл ключ, меня в автозапуске нет");
-
                 RunWhenStartupCheck.Checked = false;
             }
 
-            reg.Flush();
-            reg.Close();
-
             /////Авто отключение дефендера (автобдение при запуске)
-            //чекбокс жмяк
+            //синхронизация чекбокса с реестром
 
             reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
             string doAutoDisableKey = (string)reg.GetValue("doAutoDisable");
@@ -105,6 +99,65 @@ namespace Disable_Windows_Defender
 
             reg.Flush();
             reg.Close();
+        }
+        
+        async void RegistryDialUp(bool isCycWorking)
+        {
+            string DisableStartText = DisableEntireDefenderButton.Text;
+            string RestoreStartText = RestoreEntireDefenderButton.Text;
+
+            while (isCycWorking)
+            {
+                RegistryKey reg;
+                reg = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender");
+                
+                
+                //Смотрим в реестр, включен ли антивирус
+                int isWDED = (int)reg.GetValue("DisableAntiVirus", 0);
+                if (isWDED == 1)
+                {
+                    DisableEntireDefenderButton.Enabled = false;
+                    DisableEntireDefenderButton.Text = "(Defender Отключен) " + DisableStartText;
+
+                    reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+                    //Записать в своём кусте реестра о состоянии WD
+                    reg.SetValue("isWindowsDefenderEntireDisabled", "True");
+
+                    RestoreEntireDefenderButton.Enabled = true;
+                    RestoreEntireDefenderButton.Text = RestoreStartText;
+                }
+                if (isWDED != 1)
+                {
+                    DisableEntireDefenderButton.Enabled = true;
+                    DisableEntireDefenderButton.Text = DisableStartText;
+
+                    reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+                    //Записать в своём кусте реестра о состоянии WD
+                    reg.SetValue("isWindowsDefenderEntireDisabled", "False");
+
+                    RestoreEntireDefenderButton.Enabled = false;
+                    RestoreEntireDefenderButton.Text = "(Defender Активен) " + RestoreStartText;
+                }
+
+
+                //Смотрим включен ли UAC
+                reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System");
+
+                if ((int)reg.GetValue("EnableLUA") == 0)
+                {
+                    DisableUACbutton.Enabled = false;
+                    EnableUACbutton.Enabled = true;
+                }
+                if ((int)reg.GetValue("EnableLUA") == 1)
+                {
+                    DisableUACbutton.Enabled = true;
+                    EnableUACbutton.Enabled = false;
+                }
+
+                reg.Flush();
+                reg.Close();
+                await Task.Delay(1500);
+            }
         }
 
         //
@@ -300,15 +353,13 @@ namespace Disable_Windows_Defender
             if (RunWhenStartupCheck.Checked == true)
             {
                 reg.SetValue(regStartupKey, Assembly.GetExecutingAssembly().Location);
-                reg.Flush();
-                reg.Close();
             }
             if (RunWhenStartupCheck.Checked == false)
             {
                 reg.DeleteValue(regStartupKey);
-                reg.Flush();
-                reg.Close();
             }
+            reg.Flush();
+            reg.Close();
         }
         //Автозапуск бдения
         void ToggleAutoDisable()
@@ -335,13 +386,13 @@ namespace Disable_Windows_Defender
         {
             if (isEnabled) {
                 Cmd($"NetSh Advfirewall set allprofiles state on");
-                MessageBox.Show("Брандмауэр включён");
+                MessageBox.Show("Брандмауэр включён!", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 WFdisableButton.Enabled = true;
                 WFenableButton.Enabled = true;
             }
             if (!isEnabled) {
                 Cmd($"NetSh Advfirewall set allprofiles state off");
-                MessageBox.Show("Брандмауэр выключен");
+                MessageBox.Show("Брандмауэр выключен!", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 WFdisableButton.Enabled = true;
                 WFenableButton.Enabled = true;
             }
@@ -358,94 +409,281 @@ namespace Disable_Windows_Defender
                 }).WaitForExit();
             } //Модуль цмд-шника
         }
+
         //Добавить эту программу в исключения Defender
-        private void AddToExtensionsButton_Click(object sender, EventArgs e)
+        private void AddToExclusionsButton_Click(object sender, EventArgs e)
         {
+            string StartText = AddToExclusionsButton.Text;
+            AddToExclusionsButton.Enabled = false;
+            RemoveFromExclusionsButton.Enabled = false;
+            AddToExclusionsButton.Text = "Пожалуйста, подождите . . .";
+
             Cmd($"powershell.exe Add-MpPreference -ExclusionProcess " + "\'" + SelfFileName + "\'");
-            MessageBox.Show("Исключение добавлено");
+
+            MessageBox.Show("Исключение добавлено", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AddToExclusionsButton.Text = StartText;
+            AddToExclusionsButton.Enabled = true;
+            RemoveFromExclusionsButton.Enabled = true;
+
             void Cmd(string line)
             {
-                AddToExtensionsButton.Enabled = false;
-                RemoveFromExtensionsButton.Enabled = false;
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "cmd",
                     Arguments = $"/c {line}",
                     WindowStyle = ProcessWindowStyle.Hidden
                 }).WaitForExit();
-            AddToExtensionsButton.Enabled = true;
-            RemoveFromExtensionsButton.Enabled = true;
             } //Модуль цмд-шника
         }
-        private void RemoveFromExtensionsButton_Click(object sender, EventArgs e)
+        private void RemoveFromExclusionsButton_Click(object sender, EventArgs e)
         {
+            AddToExclusionsButton.Enabled = false;
+            RemoveFromExclusionsButton.Enabled = false;
+            string StartText = RemoveFromExclusionsButton.Text;
+            RemoveFromExclusionsButton.Text = "Пожалуйста, подождите . . .";
             Cmd($"powershell.exe Remove-MpPreference -ExclusionProcess " + "\'" + SelfFileName + "\'");
-            MessageBox.Show("Исключение удалено");
+            MessageBox.Show("Исключение удалено", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AddToExclusionsButton.Enabled = true;
+            RemoveFromExclusionsButton.Enabled = true;
+            RemoveFromExclusionsButton.Text = StartText;
             void Cmd(string line)
             {
-                AddToExtensionsButton.Enabled = false;
-                RemoveFromExtensionsButton.Enabled = false;
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "cmd",
                     Arguments = $"/c {line}",
                     WindowStyle = ProcessWindowStyle.Hidden
                 }).WaitForExit();
-                AddToExtensionsButton.Enabled = true;
-                RemoveFromExtensionsButton.Enabled = true;
             } //Модуль цмд-шника
         }
 
         //Полное включение или выключение Defender
         private void DisableEntireDefenderButton_Click(object sender, EventArgs e)
         {
-            DisableEntireDefenderButton.Enabled = false;
-            RegistryKey reg;
-            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender");
-            reg.SetValue("DisableAntiSpyware", 1);
-            reg.SetValue("DisableAntiVirus", 1);
+            if (MessageBox.Show(
+                "Вы уверены что хотите отключить Windows Defender? \nЕго работа будет прекращена сразу. \n(Но, может потребоваться перезагрузка системы)",
+                "DWD : Подтверждение действия",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Exclamation
+                ) 
+                == DialogResult.Yes )
+            {
+                ////ЗАМЕТКА//////////////////////////////////////////////////////////////////////////////////////////////////
+                //Есть ещё команды CMD для отключения функций Windows Defender в Планировщике Задач, но...
+                //Среди них есть то, что может повлиять на работу античитов, поэтому считаю их ненужными в полном пиздорезе
 
-            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\MpEngine");
-            reg.SetValue("MpEnablePus", 0);
+                //Включить задачи
+                //schtasks /Change /TN "Microsoft\Windows\ExploitGuard\ExploitGuard MDM policy Refresh" /Enable
+                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance" /Enable
+                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cleanup" /Enable
+                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan" /Enable
+                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Verification" /Enable
 
-            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection");
-            reg.SetValue("DisableBehaviorMonitoring", 1);
-            reg.SetValue("DisableIOAVProtection", 1);
-            reg.SetValue("DisableOnAccessProtection", 1);
-            reg.SetValue("DisableRealtimeMonitoring", 1);
-            reg.SetValue("DisableRoutinelyTakingAction", 1);
-            reg.SetValue("DisableScanOnRealtimeEnable", 1);
+                //Отключить задачи
+                //schtasks /Change /TN "Microsoft\Windows\ExploitGuard\ExploitGuard MDM policy Refresh" /Disable
+                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance" /Disable
+                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cleanup" /Disable
+                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan" /Disable
+                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Verification" /Disable
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Reporting");
-            reg.SetValue("DisableEnhancedNotifications", 1);
+                RegistryKey reg;
+                reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender");
+                reg.SetValue("DisableAntiSpyware", 1);
+                reg.SetValue("DisableAntiVirus", 1);
 
-            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\SpyNet");
-            reg.SetValue("DisableBlockAtFirstSeen", 1);
-            reg.SetValue("SpynetReporting", 0);
-            reg.SetValue("SubmitSamplesConsent", 2);
-            
-            reg.Flush();
-            reg.Close();
+                reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\MpEngine");
+                reg.SetValue("MpEnablePus", 0);
 
-            MessageBox.Show("Полное отключение функций завершено. \nКлючи реестра внесены. \nМесто работ в реестре: \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows Defender\\\" ");
-            DisableEntireDefenderButton.Enabled = true;
+                reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Real-Time Protection");
+                reg.SetValue("DisableBehaviorMonitoring", 1);
+                reg.SetValue("DisableIOAVProtection", 1);
+                reg.SetValue("DisableOnAccessProtection", 1);
+                reg.SetValue("DisableRealtimeMonitoring", 1);
+                reg.SetValue("DisableRoutinelyTakingAction", 1);
+                reg.SetValue("DisableScanOnRealtimeEnable", 1);
+
+                reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\Reporting");
+                reg.SetValue("DisableEnhancedNotifications", 1);
+
+                reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender\\SpyNet");
+                reg.SetValue("DisableBlockAtFirstSeen", 1);
+                reg.SetValue("SpynetReporting", 0);
+                reg.SetValue("SubmitSamplesConsent", 2);
+
+                //Проверяем был ли включен трекинг(бдение) за мониторингом когда отключался весь Defender
+                //И если он был включен, то основа поняла что надо запустить трекинг вновь, по восстановлении функций Defender
+                reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+                if ((string)reg.GetValue("isWindowsDefenderDisabledByUser") == "True")
+                {
+                    //Если автозапуск трекера был включен
+                    if ((string)reg.GetValue("doAutoDisable") == "True") 
+                    {
+                        //То сказать основе, что надо будет включить бдение, когда WD будет не будет выключен полностью
+                        reg.SetValue("isDefenderDisabledWhileTrackingIsActive", "True");
+                    }
+                }
+
+                //Говорим основе что бдить пока незачем
+                reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+                reg.SetValue("isWindowsDefenderDisabledByUser", "False");
+                //Записать в своём кусте реестра о состоянии WD
+                reg.SetValue("isWindowsDefenderEntireDisabled", "True");
+
+
+                reg.Flush();
+                reg.Close();
+
+                MessageBox.Show("Полное отключение функций Windows Defender завершено!", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
         }
         private void RestoreEntireDefenderButton_Click(object sender, EventArgs e)
         {
             RestoreEntireDefenderButton.Enabled = false;
+
+            //Удаление ключей-предписаний для Windows Defender из реестра
+            //ака Вернуть Defender в рабочее состояние
             RegistryKey reg;
             reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender");
-                reg.DeleteValue("DisableAntiVirus", false);
-                reg.DeleteValue("DisableAntiSpyware", false);
-                reg.DeleteSubKey("MpEngine", false);
-                reg.DeleteSubKey("Real-Time Protection", false);
-                reg.DeleteSubKey("Reporting", false);
-                reg.DeleteSubKey("SpyNet", false);
+            reg.DeleteValue("DisableAntiVirus", false);
+            reg.DeleteValue("DisableAntiSpyware", false);
+            reg.DeleteSubKey("MpEngine", false);
+            reg.DeleteSubKey("Real-Time Protection", false);
+            reg.DeleteSubKey("Reporting", false);
+            reg.DeleteSubKey("SpyNet", false);
+
+            //Записать в своём кусте реестра о состоянии WD
+            reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
+            reg.SetValue("isWindowsDefenderEntireDisabled", "False");
+
             reg.Flush();
             reg.Close();
-            MessageBox.Show("Восстановление функций Windows Defender завершено!");
-            RestoreEntireDefenderButton.Enabled = true;
+            MessageBox.Show("Восстановление функций Windows Defender завершено!", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+        //end block
+
+        //Функции с DNS-адаптером
+        private void OOflushDNSbutton_Click(object sender, EventArgs e)
+        {
+            string StartText = OOflushDNSbutton.Text;
+            OOflushDNSbutton.Enabled = false;
+            OOflushDNSbutton.Text = "Пожалуйста, подождите . . .";
+
+            Cmd($"ipconfig /flushdns");
+
+            MessageBox.Show("Кэш DNS Очищен", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            OOflushDNSbutton.Text = StartText;
+            OOflushDNSbutton.Enabled = true;
+
+            void Cmd(string line)
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Arguments = $"/c {line}",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }).WaitForExit();
+            } //Модуль цмд-шника
+        }
+        private void RenewIp4vbutton_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show(
+                "Вы уверены что хотите перенастроить IPv4 адаптер?" +
+                "\nЕго работа будет прервана!" +
+                "\n\nПрограммы потеряют доступ к интернету, " +
+                "что может привести к сбоям. " +
+                "\nНо подключение будет восстановлено." +
+                "\n\nПродолжить?",
+                "DWD : Подтверждение действия",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Exclamation
+                )
+                == DialogResult.Yes)
+            {
+                string StartText = RenewIp4vbutton.Text;
+                RenewIp4vbutton.Enabled = false;
+                RenewIp4vbutton.Text = "Пожалуйста, подождите . . .";
+
+                Cmd($"ipconfig /release & ipconfig /Renew");
+
+                MessageBox.Show("Перенастройка IPv4-адаптера завершена!\nАдресс IPv4 обновлён.", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                RenewIp4vbutton.Text = StartText;
+                RenewIp4vbutton.Enabled = true;
+            }
+
+            void Cmd(string line)
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Arguments = $"/c {line}",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }).WaitForExit();
+            } //Модуль цмд-шника
         }
 
+        //Открыть Брандмауэр
+        private void OOopenWFbutton_Click(object sender, EventArgs e)
+        {
+            OOopenWFbutton.Enabled = false;
+            Cmd($"start WF.msc & exit");
+            OOopenWFbutton.Enabled = true;
+
+            void Cmd(string line)
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Arguments = $"/c {line}",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }).WaitForExit();
+            } //Модуль цмд-шника
+        }
+
+        private void DisableUACbutton_Click(object sender, EventArgs e)
+        {
+            RegistryKey reg;
+            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System");
+
+            if ((int)reg.GetValue("EnableLUA") != 0)
+            {
+                DisableUACbutton.Enabled = false;
+                reg.SetValue("EnableLUA", 0);
+                MessageBox.Show("Контроль Учётных Записей отключён. \nПерезагрузите компьютер для вступления в силу.", 
+                    "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DisableUACbutton.Enabled = true;
+            }
+            else
+            {
+                MessageBox.Show("Не требуется. UAC Уже отключён", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            reg.Flush();
+            reg.Close();
+        }
+
+        private void EnableUACbutton_Click(object sender, EventArgs e)
+        {
+            RegistryKey reg;
+            reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System");
+
+            if ((int)reg.GetValue("EnableLUA") != 1)
+            {
+                DisableUACbutton.Enabled = false;
+                reg.SetValue("EnableLUA", 1);
+                MessageBox.Show("Контроль Учётных Записей включен. \nПерезагрузите компьютер для вступления в силу.",
+                    "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                DisableUACbutton.Enabled = true;
+            }
+            else
+            {
+                MessageBox.Show("Не требуется. UAC Уже включен", "DWD" , MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+
+            reg.Flush();
+            reg.Close();
+        }
     }
 }
