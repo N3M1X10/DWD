@@ -56,7 +56,7 @@ namespace Disable_Windows_Defender
                 }
             }
                 void Disappearing() {
-                    bool DisappearingIsReady = false;
+                bool DisappearingIsReady = false;
                     if (!DisappearingIsReady)
                     {
                         Opacity = 1;
@@ -292,7 +292,7 @@ namespace Disable_Windows_Defender
                 disableWinDefenderToolStripMenuItem.Text = FuncIsWorkingText;
 
                 //Отключаем мониторинг в реальном времени
-                Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $true\"");
+                Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $true\" & exit /b");
 
                 reg.Flush();
                 reg.Close();
@@ -311,22 +311,7 @@ namespace Disable_Windows_Defender
         } //Включить бдение за дефендером
         private void TrayIcon_DoubleClick(object sender, EventArgs e)
         {
-            AboutForm about;
-            about = new AboutForm();
-
-            bool able = false;
-            foreach (Form f in Application.OpenForms)
-                if (f.Name == "AboutForm")
-                    able = true;
-            if (!able)
-            {
-                about = new AboutForm();
-                about.Show();
-            }
-            else
-            {
-                WindowAlreadyExist();
-            }
+            AboutFormOpen();
         }
         private void QuitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -344,7 +329,7 @@ namespace Disable_Windows_Defender
 
             if (isWinDefEntireDisabled != "True")
             {
-                Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $false\"");
+                Cmd($"powershell.exe -command \"Set-MpPreference -DisableRealtimeMonitoring $false\" & exit /b");
                 WDdisabled = false;
 
                 reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
@@ -373,24 +358,52 @@ namespace Disable_Windows_Defender
         }
         void AboutButton_Click(object sender, EventArgs e)
         {
-            AboutForm about;
-            about = new AboutForm();
-
-            bool able = false;
-            foreach (Form f in Application.OpenForms)
-                if (f.Name == "AboutForm")
-                    able = true;
-            if (!able)
-            {
-                about = new AboutForm();
-                about.Show();
-            }
-            else
-            {
-                WindowAlreadyExist();
-            }
+            AboutFormOpen();
         }
         
+        AboutForm aboutForm = new AboutForm();
+        async void AboutFormOpen()
+        {
+             //AboutForm isAboutOpened = (AboutForm)Application.OpenForms["AboutForm"];
+            //if (isAboutOpened == null)
+            //{            
+            if (aboutForm.Opacity < 1)
+            {
+                aboutForm.Show();
+                aboutForm.Activate();
+                aboutForm.WindowState = FormWindowState.Normal;
+                aboutForm.ShowInTaskbar = true;
+
+                bool waitVal = false;
+                while (waitVal == false)
+                {
+                    aboutForm.Opacity = 0; //Прозрачность окна
+                    Timer timerMinimForm = new Timer(); //Создание таймера
+                    timerMinimForm.Tick += new EventHandler((sender2, e2) =>
+                    {
+                        if ((aboutForm.Opacity += 0.08) >= 1)
+                            timerMinimForm.Stop();
+                    });
+                    timerMinimForm.Interval = 1;
+                    timerMinimForm.Start();
+                    await Task.Delay(500);
+                    if (aboutForm.Opacity >= 1)
+                    {
+                        waitVal = true;
+                        timerMinimForm.Dispose();
+                        aboutForm.Opacity = 1;
+                    }
+                }
+
+            }
+            else if (aboutForm.Opacity >= 1)
+            {
+                aboutForm.Activate();
+                WindowAlreadyExist();
+            }
+            //aboutForm.FormClosed += (s, e) => {aboutForm.Dispose(); GC.Collect(); GC.WaitForPendingFinalizers(); };
+        }
+
         //Окно уже где-то есть
         bool WAEfuncisable = true;
         void WindowAlreadyExist()
@@ -412,7 +425,6 @@ namespace Disable_Windows_Defender
 
               );
 
-
                 //мсгбокс смотрит нажата ли кнопка ОК
                 msgboxexist = DialogResult.OK;
                 
@@ -431,22 +443,7 @@ namespace Disable_Windows_Defender
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
-            AboutForm about;
-            about = new AboutForm();
-
-            bool able = false;
-            foreach (Form f in Application.OpenForms)
-                if (f.Name == "AboutForm")
-                    able = true;
-            if (!able)
-            {
-                about = new AboutForm();
-                about.Show();
-            }
-            else
-            {
-                WindowAlreadyExist();
-            }
+            AboutFormOpen();
         }
     }
 }

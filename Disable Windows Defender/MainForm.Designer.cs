@@ -116,9 +116,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.Font = new System.Drawing.Font("Comic Sans MS", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.label1.ForeColor = System.Drawing.SystemColors.Info;
-            this.label1.Location = new System.Drawing.Point(12, 111);
+            this.label1.Location = new System.Drawing.Point(15, 100);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(576, 115);
+            this.label1.Size = new System.Drawing.Size(570, 130);
             this.label1.TabIndex = 1;
             this.label1.Text = "Я в трее! :)";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -140,7 +140,7 @@
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panel1.Controls.Add(this.pictureBox1);
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Location = new System.Drawing.Point(100, 61);
+            this.panel1.Location = new System.Drawing.Point(100, 55);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(400, 50);
             this.panel1.TabIndex = 3;
@@ -198,9 +198,9 @@
             this.pictureBox2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox2.BackgroundImage")));
             this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pictureBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBox2.Location = new System.Drawing.Point(56, 229);
+            this.pictureBox2.Location = new System.Drawing.Point(55, 235);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(489, 92);
+            this.pictureBox2.Size = new System.Drawing.Size(490, 90);
             this.pictureBox2.TabIndex = 4;
             this.pictureBox2.TabStop = false;
             // 

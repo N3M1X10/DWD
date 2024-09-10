@@ -12,8 +12,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <StartAction>Project</StartAction>
-    <StartProgram>
-    </StartProgram>
-    <StartArguments>taskkill /f /im "Disable Windows Defender.exe"</StartArguments>
+    <StartProgram>G:\Codes\C#\Projects\Windows Forms\Disable Windows Defender\bat\shutdown.exe</StartProgram>
+    <StartArguments>
+    </StartArguments>
   </PropertyGroup>
 </Project>

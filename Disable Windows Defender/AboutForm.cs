@@ -13,6 +13,7 @@ namespace Disable_Windows_Defender
 {
     public partial class AboutForm : Form
     {
+
         //Получить версию сборки чтобы потом впихнуть куда-нибудь где надо оно
         readonly static Assembly assemblyBlock = Assembly.GetExecutingAssembly();
         readonly static FileVersionInfo fvi = FileVersionInfo.GetVersionInfo(assemblyBlock.Location);
@@ -24,30 +25,30 @@ namespace Disable_Windows_Defender
         public AboutForm()
         {
             //вывод поверх экрана
-            TopMost = true;
+            //TopMost = true;
 
             InitializeComponent();
             Opacity = 0;
-            Timer timer = new Timer();
-            timer.Tick += new EventHandler((sender, e) =>
-            {
-                if ((Opacity += 0.05d) >= 1) timer.Stop();
-            });
-            timer.Interval = 1;
-            timer.Start();
-            Select();
-            //Отключение режима поверх всех окон
-            TopMost = false;
+            //Timer timer = new Timer();
+            //timer.Tick += new EventHandler((sender, e) =>
+            //{
+            //    if ((Opacity += 0.05d) >= 1) timer.Stop();
+            //});
+            //timer.Interval = 1;
+            //timer.Start();
+            //Select();
+            ////Отключение режима поверх всех окон
+            //TopMost = false;
 
             //Замена текстов с подставлением переменных при загрузке окна
             VersionLabel.Text = "Версия: " + ProjectVersion;
             SwitchToWhatsNew.Text = "Что нового в " + ProjectVersion;
             WhatsNewFormHeaderText.Text = "Что нового в " + ProjectVersion;
+            RegistryCheck();
         }
         private async void AboutForm_Load(object sender, EventArgs e)
         {
             await Task.Delay(100);
-            RegistryCheck();
             RegistryDialUp(true);
         }
 
@@ -194,17 +195,41 @@ namespace Disable_Windows_Defender
         }
         async void CloseWin()
         {
-            //Плавное затухание формы при простом закрытии формы
-            Opacity = 1;
-            Timer timer = new Timer();
-            timer.Tick += new EventHandler((sender, e) =>
+            ////Плавное затухание формы при простом закрытии формы
+            //Opacity = 1;
+            //Timer timer = new Timer();
+            //timer.Tick += new EventHandler((sender, e) =>
+            //{
+            //    if ((Opacity -= 0.05d) <= 0) timer.Stop();
+            //});
+            //timer.Interval = 1;
+            //timer.Start();
+            //await Task.Delay(500);
+
+            bool waitVal = false;
+            while (waitVal == false)
             {
-                if ((Opacity -= 0.05d) <= 0) timer.Stop();
-            });
-            timer.Interval = 1;
-            timer.Start();
-            await Task.Delay(500);
-            Close();
+                Opacity = 1; //Прозрачность окна
+                Timer timerMinimForm = new Timer(); //Создание таймера
+                timerMinimForm.Tick += new EventHandler((sender2, e2) =>
+                {
+                    if ((Opacity -= 0.08) <= 0)
+                        timerMinimForm.Stop();
+                });
+                timerMinimForm.Interval = 1;
+                timerMinimForm.Start();
+                await Task.Delay(500);
+                if (Opacity <= 0)
+                {
+                    waitVal = true;
+                    timerMinimForm.Dispose();
+                    Opacity = 0;
+                }
+            }
+
+            WindowState = FormWindowState.Minimized;
+            ShowInTaskbar = false;
+            Hide();
         }
         //
         // end Win Dragging
@@ -219,14 +244,14 @@ namespace Disable_Windows_Defender
             Timer timer = new Timer();
             timer.Tick += new EventHandler((sender, e) =>
             {
-                if ((Opacity -= 0.05d) <= 0) timer.Stop();
+                if ((Opacity -= 0.08d) <= 0) timer.Stop();
             });
             timer.Interval = 1;
             timer.Start();
             await Task.Delay(500);
 
             //Закрытие всей программы
-            Application.Exit();
+            Process.GetCurrentProcess().Kill();
         }
         private void ShutDownButton_MouseMove(object sender, MouseEventArgs e)
         {
@@ -247,7 +272,10 @@ namespace Disable_Windows_Defender
         {
             Process.Start("https://discord.gg/2jJ3Qn4");
         }
-
+        private void BoostyButton_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://boosty.to/nemix");
+        }
 
         //Переключения между вкладками
         private void SwitchToWhatsNew_Click(object sender, EventArgs e)
@@ -285,7 +313,7 @@ namespace Disable_Windows_Defender
 
             //Что нового
             WhatsNewFormHeader.Visible = false;
-            WhatsNewPanel.Visible = false;
+            WhatsNewTab.Visible = false;
 
             //Опции
             OtherOptionsPanel.Visible = false;
@@ -316,7 +344,7 @@ namespace Disable_Windows_Defender
             if (isWhatsNew)
             {
                 WhatsNewFormHeader.Visible = true;
-                WhatsNewPanel.Visible = true;
+                WhatsNewTab.Visible = true;
 
                 SwitchToWhatsNew.ForeColor = enabledFore;
                 SwitchToWhatsNew.BackColor = enabledBack;
@@ -385,13 +413,13 @@ namespace Disable_Windows_Defender
         void FireWallToggle(bool isEnabled)
         {
             if (isEnabled) {
-                Cmd($"NetSh Advfirewall set allprofiles state on");
+                Cmd($"NetSh Advfirewall set allprofiles state on & exit /b");
                 MessageBox.Show("Брандмауэр включён!", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 WFdisableButton.Enabled = true;
                 WFenableButton.Enabled = true;
             }
             if (!isEnabled) {
-                Cmd($"NetSh Advfirewall set allprofiles state off");
+                Cmd($"NetSh Advfirewall set allprofiles state off & exit /b");
                 MessageBox.Show("Брандмауэр выключен!", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 WFdisableButton.Enabled = true;
                 WFenableButton.Enabled = true;
@@ -418,7 +446,7 @@ namespace Disable_Windows_Defender
             RemoveFromExclusionsButton.Enabled = false;
             AddToExclusionsButton.Text = "Пожалуйста, подождите . . .";
 
-            Cmd($"powershell.exe Add-MpPreference -ExclusionProcess " + "\'" + SelfFileName + "\'");
+            Cmd($"powershell.exe Add-MpPreference -ExclusionProcess " + "\'" + SelfFileName + "\' & exit /b");
 
             MessageBox.Show("Исключение добавлено", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
             AddToExclusionsButton.Text = StartText;
@@ -441,7 +469,7 @@ namespace Disable_Windows_Defender
             RemoveFromExclusionsButton.Enabled = false;
             string StartText = RemoveFromExclusionsButton.Text;
             RemoveFromExclusionsButton.Text = "Пожалуйста, подождите . . .";
-            Cmd($"powershell.exe Remove-MpPreference -ExclusionProcess " + "\'" + SelfFileName + "\'");
+            Cmd($"powershell.exe Remove-MpPreference -ExclusionProcess " + "\'" + SelfFileName + "\' & exit /b");
             MessageBox.Show("Исключение удалено", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
             AddToExclusionsButton.Enabled = true;
             RemoveFromExclusionsButton.Enabled = true;
@@ -460,6 +488,7 @@ namespace Disable_Windows_Defender
         //Полное включение или выключение Defender
         private void DisableEntireDefenderButton_Click(object sender, EventArgs e)
         {
+            DisableEntireDefenderButton.Enabled = false;
             if (MessageBox.Show(
                 "Вы уверены что хотите отключить Windows Defender? \nЕго работа будет прекращена сразу. \n(Но, может потребоваться перезагрузка системы)",
                 "DWD : Подтверждение действия",
@@ -468,24 +497,23 @@ namespace Disable_Windows_Defender
                 ) 
                 == DialogResult.Yes )
             {
-                ////ЗАМЕТКА//////////////////////////////////////////////////////////////////////////////////////////////////
-                //Есть ещё команды CMD для отключения функций Windows Defender в Планировщике Задач, но...
-                //Среди них есть то, что может повлиять на работу античитов, поэтому считаю их ненужными в полном пиздорезе
+                //Отключение функций в планировщике задач
+                Cmd($"schtasks /Change /TN \"Microsoft\\Windows\\ExploitGuard\\ExploitGuard MDM policy Refresh\" /Disable & " +
+                    "schtasks /Change /TN \"Microsoft\\Windows\\Windows Defender\\Windows Defender Cache Maintenance\" /Disable &" +
+                    "schtasks /Change /TN \"Microsoft\\Windows\\Windows Defender\\Windows Defender Cleanup\" /Disable &" +
+                    "schtasks /Change /TN \"Microsoft\\Windows\\Windows Defender\\Windows Defender Scheduled Scan\" /Disable &" +
+                    "schtasks /Change /TN \"Microsoft\\Windows\\Windows Defender\\Windows Defender Verification\" /Disable &" +
+                    "exit /b");
 
-                //Включить задачи
-                //schtasks /Change /TN "Microsoft\Windows\ExploitGuard\ExploitGuard MDM policy Refresh" /Enable
-                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance" /Enable
-                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cleanup" /Enable
-                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan" /Enable
-                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Verification" /Enable
-
-                //Отключить задачи
-                //schtasks /Change /TN "Microsoft\Windows\ExploitGuard\ExploitGuard MDM policy Refresh" /Disable
-                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cache Maintenance" /Disable
-                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Cleanup" /Disable
-                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Scheduled Scan" /Disable
-                //schtasks /Change /TN "Microsoft\Windows\Windows Defender\Windows Defender Verification" /Disable
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                void Cmd(string line)
+                {
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "cmd",
+                        Arguments = $"/c {line}",
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    }).WaitForExit();
+                } //Модуль цмд-шника
 
                 RegistryKey reg;
                 reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows Defender");
@@ -511,6 +539,13 @@ namespace Disable_Windows_Defender
                 reg.SetValue("SpynetReporting", 0);
                 reg.SetValue("SubmitSamplesConsent", 2);
 
+                //Отключение SmartScreen
+                if (SmartScreenCheck.Checked)
+                {
+                    reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows\\System");
+                    reg.SetValue("EnableSmartScreen", 0);
+                }
+
                 //Проверяем был ли включен трекинг(бдение) за мониторингом когда отключался весь Defender
                 //И если он был включен, то основа поняла что надо запустить трекинг вновь, по восстановлении функций Defender
                 reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
@@ -535,11 +570,30 @@ namespace Disable_Windows_Defender
                 reg.Close();
 
                 MessageBox.Show("Полное отключение функций Windows Defender завершено!", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                DisableEntireDefenderButton.Enabled = true;
             }
         }
         private void RestoreEntireDefenderButton_Click(object sender, EventArgs e)
         {
             RestoreEntireDefenderButton.Enabled = false;
+
+            //Включение функций в планировщике задач
+            Cmd($"schtasks /Change /TN \"Microsoft\\Windows\\ExploitGuard\\ExploitGuard MDM policy Refresh\" /Enable & " +
+                "schtasks /Change /TN \"Microsoft\\Windows\\Windows Defender\\Windows Defender Cache Maintenance\" /Enable &" +
+                "schtasks /Change /TN \"Microsoft\\Windows\\Windows Defender\\Windows Defender Cleanup\" /Enable &" +
+                "schtasks /Change /TN \"Microsoft\\Windows\\Windows Defender\\Windows Defender Scheduled Scan\" /Enable &" +
+                "schtasks /Change /TN \"Microsoft\\Windows\\Windows Defender\\Windows Defender Verification\" /Enable &" +
+                "exit /b");
+
+            void Cmd(string line)
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Arguments = $"/c {line}",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }).WaitForExit();
+            } //Модуль цмд-шника
 
             //Удаление ключей-предписаний для Windows Defender из реестра
             //ака Вернуть Defender в рабочее состояние
@@ -551,6 +605,13 @@ namespace Disable_Windows_Defender
             reg.DeleteSubKey("Real-Time Protection", false);
             reg.DeleteSubKey("Reporting", false);
             reg.DeleteSubKey("SpyNet", false);
+
+            //SmartScreen
+            if (SmartScreenCheck.Checked)
+            {
+                reg = Registry.LocalMachine.CreateSubKey("SOFTWARE\\Policies\\Microsoft\\Windows\\System");
+                reg.DeleteValue("EnableSmartScreen", false);
+            }
 
             //Записать в своём кусте реестра о состоянии WD
             reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Disable Windows Defender");
@@ -569,7 +630,7 @@ namespace Disable_Windows_Defender
             OOflushDNSbutton.Enabled = false;
             OOflushDNSbutton.Text = "Пожалуйста, подождите . . .";
 
-            Cmd($"ipconfig /flushdns");
+            Cmd($"ipconfig /flushdns & exit /b");
 
             MessageBox.Show("Кэш DNS Очищен", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -605,7 +666,7 @@ namespace Disable_Windows_Defender
                 RenewIp4vbutton.Enabled = false;
                 RenewIp4vbutton.Text = "Пожалуйста, подождите . . .";
 
-                Cmd($"ipconfig /release & ipconfig /Renew");
+                Cmd($"ipconfig /release & ipconfig /Renew & exit /b");
 
                 MessageBox.Show("Перенастройка IPv4-адаптера завершена!\nАдресс IPv4 обновлён.", "DWD", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -628,7 +689,7 @@ namespace Disable_Windows_Defender
         private void OOopenWFbutton_Click(object sender, EventArgs e)
         {
             OOopenWFbutton.Enabled = false;
-            Cmd($"start WF.msc & exit");
+            Cmd($"start WF.msc & exit /b");
             OOopenWFbutton.Enabled = true;
 
             void Cmd(string line)
@@ -684,6 +745,25 @@ namespace Disable_Windows_Defender
 
             reg.Flush();
             reg.Close();
+        }
+
+        //Запрет закрытия формы через панель задач. Перенаправляет дело в другой метод который сделает как надо.
+        private void AboutForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            e.Cancel = true;
+            CloseWin();
+        }
+        //Скрыть, появляющуюся из-за обработчика события закрытия формы,
+        //кнопку закрытия формы, которая трижды тут никому уже не нужна.
+        private const int CP_NOCLOSE_BUTTON = 0x200;
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams myCp = base.CreateParams;
+                myCp.ClassStyle = myCp.ClassStyle | CP_NOCLOSE_BUTTON;
+                return myCp;
+            }
         }
     }
 }
