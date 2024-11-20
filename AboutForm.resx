@@ -3710,6 +3710,16 @@
         AAAAAAAAAAAAAAAAwF/95z//H2BvfQCd3wx2AAAAAElFTkSuQmCC
 </value>
   </data>
+  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 10</value>
+  </metadata>
+  <data name="RunWhenStartupCheck.ToolTip" xml:space="preserve">
+    <value>Опция определяет будет ли программа
+запускаться при запуске Windows.
+Галочка добавит программу в Автозапуск.
+
+ПРИМЕЧАНИЕ: Добавление и удаление из автозапуска - производить именно отсюда, а не из диспетчера задач!</value>
+  </data>
   <data name="WNicon.BackgroundImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAL
@@ -3830,22 +3840,10 @@ P.S: Есть те параметры, отключение которых, мо
 </value>
   </data>
   <data name="WhatsNewText.Text" xml:space="preserve">
-    <value>• Доработка функции полного отключения Windows Defender [Прочие опции]
-- Теперь включены функции из планировщика задач.
-Если вы выключали Defender через эту программу: рекомендуется включить и выключить снова
-- Добавлена опция дополнительно отключать или включать SmartScreen вместе с Defender.
-
-• Оптимизация и переработка открытия формы About (О программе / Опции)
-- Исправлена ошибка засорения памяти процесса при повторном открывании формы.
-- Теперь объект формы создаётся один раз, 
-и при закрывании лишь контролируется её видимость.
-- Через панель задач и Alt+Tab вызовы команд закрывания также 
-перенаправляются в метод скрытия формы.
-- Слегка увеличена скорость анимации появления/исчезновения окна.
-
-• Внешний вид
-- Переработка структуры элементов и доработки отступов элементов на всех вкладках и формах.
-- Доработки подсказок при наведении на элементы.</value>
+    <value>• Чекбокс автозагрузки теперь контроллирует задачи планировщика
+- Исправлено удаление из автозагрузки
+- Теперь есть удаление задачи из планировщика
+- При перемещении программы, после запуска, теперь подстраивает путь и в планировщике задач.</value>
   </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>35</value>

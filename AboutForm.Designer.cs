@@ -342,8 +342,7 @@
             this.RunWhenStartupCheck.Size = new System.Drawing.Size(237, 20);
             this.RunWhenStartupCheck.TabIndex = 8;
             this.RunWhenStartupCheck.Text = "Запускать при запуске системы";
-            this.toolTip.SetToolTip(this.RunWhenStartupCheck, "Опция определяет будет ли программа\r\nзапускаться при запуске Windows.\r\n\r\nГалочка " +
-        "добавит программу в Автозапуск.");
+            this.toolTip.SetToolTip(this.RunWhenStartupCheck, resources.GetString("RunWhenStartupCheck.ToolTip"));
             this.RunWhenStartupCheck.UseVisualStyleBackColor = true;
             this.RunWhenStartupCheck.CheckedChanged += new System.EventHandler(this.RunWhenStartupCheck_CheckedChanged);
             // 
@@ -968,9 +967,9 @@
             // 
             // TabsGroup
             // 
+            this.TabsGroup.Controls.Add(this.OtherOptionsPanel);
             this.TabsGroup.Controls.Add(this.WhatsNewTab);
             this.TabsGroup.Controls.Add(this.AboutWrap);
-            this.TabsGroup.Controls.Add(this.OtherOptionsPanel);
             this.TabsGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabsGroup.Location = new System.Drawing.Point(0, 85);
             this.TabsGroup.Name = "TabsGroup";

@@ -21,6 +21,8 @@ namespace Disable_Windows_Defender
 
         //имя исполняемого файла данной сборки
         readonly string SelfFileName = Path.GetFileName(Application.ExecutablePath);
+        //путь к сценарию
+        string mycurrentpath = Assembly.GetExecutingAssembly().Location;
 
         public AboutForm()
         {
@@ -59,7 +61,6 @@ namespace Disable_Windows_Defender
             RegistryKey reg;
             reg = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
             string myregkey = (string)reg.GetValue(regStartupKey);
-            string mycurrentpath = Assembly.GetExecutingAssembly().Location;
 
             if (myregkey != null) //если значение есть
             {
@@ -69,6 +70,18 @@ namespace Disable_Windows_Defender
                 {
                     //MessageBox.Show("Ключ несовпал. Обновляю на текущий");
                     reg.SetValue(regStartupKey, mycurrentpath);
+                    Cmd($"SCHTASKS /Delete /TN \"Disable Windows Defender\" /F");
+                    Cmd($"SCHTASKS /Create /TN \"Disable Windows Defender\" /TR \"{mycurrentpath}\" /SC ONSTART /RL HIGHEST /F");
+
+                    void Cmd(string line)
+                    {
+                        Process.Start(new ProcessStartInfo
+                        {
+                            FileName = "cmd",
+                            Arguments = $"/c {line}",
+                            WindowStyle = ProcessWindowStyle.Hidden
+                        }).WaitForExit();
+                    } //Модуль цмд-шника
                 }
                 RunWhenStartupCheck.Checked = true; //синхронизировать галочку с статусом из реестра
             }
@@ -381,11 +394,22 @@ namespace Disable_Windows_Defender
             if (RunWhenStartupCheck.Checked == true)
             {
                 reg.SetValue(regStartupKey, Assembly.GetExecutingAssembly().Location);
+                Cmd($"SCHTASKS /Create /TN \"Disable Windows Defender\" /TR \"{mycurrentpath}\" /SC ONSTART /RL HIGHEST /F");
             }
             if (RunWhenStartupCheck.Checked == false)
             {
                 reg.DeleteValue(regStartupKey);
+                Cmd($"SCHTASKS /Delete /TN \"Disable Windows Defender\" /F");
             }
+            void Cmd(string line)
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Arguments = $"/c {line}",
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }).WaitForExit();
+            } //Модуль цмд-шника
             reg.Flush();
             reg.Close();
         }
