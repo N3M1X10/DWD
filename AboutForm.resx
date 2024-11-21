@@ -3710,9 +3710,6 @@
         AAAAAAAAAAAAAAAAwF/95z//H2BvfQCd3wx2AAAAAElFTkSuQmCC
 </value>
   </data>
-  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 10</value>
-  </metadata>
   <data name="RunWhenStartupCheck.ToolTip" xml:space="preserve">
     <value>Опция определяет будет ли программа
 запускаться при запуске Windows.

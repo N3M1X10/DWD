@@ -967,9 +967,9 @@
             // 
             // TabsGroup
             // 
-            this.TabsGroup.Controls.Add(this.OtherOptionsPanel);
             this.TabsGroup.Controls.Add(this.WhatsNewTab);
             this.TabsGroup.Controls.Add(this.AboutWrap);
+            this.TabsGroup.Controls.Add(this.OtherOptionsPanel);
             this.TabsGroup.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabsGroup.Location = new System.Drawing.Point(0, 85);
             this.TabsGroup.Name = "TabsGroup";

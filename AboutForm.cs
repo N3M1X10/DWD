@@ -71,7 +71,7 @@ namespace Disable_Windows_Defender
                     //MessageBox.Show("Ключ несовпал. Обновляю на текущий");
                     reg.SetValue(regStartupKey, mycurrentpath);
                     Cmd($"SCHTASKS /Delete /TN \"Disable Windows Defender\" /F");
-                    Cmd($"SCHTASKS /Create /TN \"Disable Windows Defender\" /TR \"{mycurrentpath}\" /SC ONSTART /RL HIGHEST /F");
+                    ToggleRunWhenStartup();
 
                     void Cmd(string line)
                     {
@@ -394,7 +394,7 @@ namespace Disable_Windows_Defender
             if (RunWhenStartupCheck.Checked == true)
             {
                 reg.SetValue(regStartupKey, Assembly.GetExecutingAssembly().Location);
-                Cmd($"SCHTASKS /Create /TN \"Disable Windows Defender\" /TR \"{mycurrentpath}\" /SC ONSTART /RL HIGHEST /F");
+                Cmd($"SCHTASKS /Create /TN \"Disable Windows Defender\" /TR '\"{mycurrentpath}\"' /SC ONSTART /RL HIGHEST /F");
             }
             if (RunWhenStartupCheck.Checked == false)
             {
